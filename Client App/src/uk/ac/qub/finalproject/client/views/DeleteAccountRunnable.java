@@ -36,8 +36,7 @@ public class DeleteAccountRunnable implements Runnable {
 	private void deletePreferences(Context context) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		pref.edit().clear();
-		pref.edit().commit();
+		pref.edit().clear().commit();		
 	}
 
 	private void unregisterReceivers(Context context) {

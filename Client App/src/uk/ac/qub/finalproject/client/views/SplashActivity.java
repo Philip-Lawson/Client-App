@@ -24,7 +24,7 @@ public class SplashActivity extends Activity {
 
 		if (pref.getBoolean(getString(R.string.is_registered_key), false)) {
 			// open main app
-			Intent intent = new Intent(this, MainActivity.class);
+			Intent intent = new Intent(this, MainPage.class);
 			startActivity(intent);
 		} else {
 			// move to the register page

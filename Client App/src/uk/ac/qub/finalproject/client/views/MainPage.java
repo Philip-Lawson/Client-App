@@ -62,7 +62,7 @@ public class MainPage extends ActionBarActivity {
 			.replace(android.R.id.content, new MyAccountFragment())
 			.commit();		
 			break;
-		case R.string.delete_account_button_id:
+		case R.string.delete_account_menu_button_id:
 			getSupportActionBar().setTitle(R.string.delete_account_button_title);
 			getFragmentManager().beginTransaction()
 			.replace(android.R.id.content, new DeleteAccountFragment())

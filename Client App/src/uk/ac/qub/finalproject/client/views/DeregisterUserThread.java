@@ -37,9 +37,13 @@ public class DeregisterUserThread extends RunnableClientTemplate {
 	@Override
 	protected void communicateWithServer() throws IOException {
 		String deviceID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+		RegistrationPack pack = new RegistrationPack();
+		pack.setAndroidID(deviceID);
 		
+		output.reset();
 		output.writeInt(ClientRequest.DEREGISTER_DEVICE);
 		output.writeObject(deviceID);
+		output.flush();
 		
 		deregisterSuccess = input.readBoolean();
 

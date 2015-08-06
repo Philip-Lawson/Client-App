@@ -601,11 +601,13 @@ int string charging_description_true 0x7f0b0029
 int string charging_key 0x7f0b0027
 int string charging_title 0x7f0b0028
 int string default_anonymous_email_summary 0x7f0b003d
-int string delete_account_button_id 0x7f0b006e
-int string delete_account_button_text 0x7f0b006f
+int string delete_account_button_id 0x7f0b0070
+int string delete_account_button_text 0x7f0b0071
 int string delete_account_button_title 0x7f0b0054
 int string delete_account_menu_button_id 0x7f0b0053
 int string delete_account_page_title 0x7f0b006d
+int string delete_account_textview_id 0x7f0b006e
+int string delete_account_textview_text 0x7f0b006f
 int string email_key 0x7f0b003b
 int string email_settings_title 0x7f0b003c
 int string hello_world 0x7f0b0013

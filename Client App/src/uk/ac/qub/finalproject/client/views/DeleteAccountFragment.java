@@ -2,6 +2,7 @@
  * 
  */
 package uk.ac.qub.finalproject.client.views;
+
 import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
 import uk.ac.qub.finalproject.client.views.R;
 import android.app.AlertDialog;
@@ -26,10 +27,10 @@ import android.widget.Button;
  */
 public class DeleteAccountFragment extends Fragment {
 
-	public static String DEREGISTRATION_SUCCESS = "Account deleted";	
+	public static String DEREGISTRATION_SUCCESS = "Account deleted";
 
 	private Button deleteAccountButton;
-	private ProgressDialog deleteProgress;	
+	private ProgressDialog deleteProgress;
 
 	/**
 	 * This handler is registered with the deregistration thread. The thread
@@ -45,15 +46,16 @@ public class DeleteAccountFragment extends Fragment {
 		}
 
 	};
-	
-	private final Handler dataDeletionHandler = new Handler(Looper.getMainLooper()){@Override
-		public void handleMessage(Message msg) {
-		super.handleMessage(msg);
-		deleteProgress.dismiss();
-		moveToRegisterPage();		
-	}
 
-};
+	private final Handler dataDeletionHandler = new Handler(
+			Looper.getMainLooper()) {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			moveToRegisterPage();
+		}
+
+	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +67,8 @@ public class DeleteAccountFragment extends Fragment {
 	}
 
 	private void setupDeleteAccountButton(View view) {
-		deleteAccountButton = (Button) view.findViewById(R.string.delete_account_button_id);
+		deleteAccountButton = (Button) view
+				.findViewById(R.string.delete_account_button_id);
 		deleteAccountButton.setOnClickListener(new Button.OnClickListener() {
 
 			@Override
@@ -76,9 +79,7 @@ public class DeleteAccountFragment extends Fragment {
 	}
 
 	private void handleAccountDeletion(boolean success) {
-		if (deleteProgress.isShowing()) {
-			deleteProgress.dismiss();
-		}
+		deleteProgress.dismiss();
 
 		if (success) {
 			showDeleteSuccessfulDialog();
@@ -90,17 +91,17 @@ public class DeleteAccountFragment extends Fragment {
 
 	private void showAreYouSureDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Account Successfully Deleted");
+		builder.setMessage("Are you sure you want to delete your account?");
 		builder.setPositiveButton("YES", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				RunnableClientTemplate deregisterClient = new DeregisterUserThread(
-						getActivity(), accountDeletionHandler);
+						getActivity().getApplicationContext(), accountDeletionHandler);
 				Thread deleteAccountThread = new Thread(deregisterClient);
 				deleteAccountThread.setDaemon(true);
 				deleteAccountThread.start();
-				showServerProgress();
+				showServerProgress();			
 			}
 
 		});
@@ -125,12 +126,12 @@ public class DeleteAccountFragment extends Fragment {
 	private void showDeleteSuccessfulDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle("Account Successfully Deleted");
+		builder.setMessage("Thank you for contributing to our project!");
 		builder.setNeutralButton("OK", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				deleteAccountData();
-				
+				deleteAccountData();				
 			}
 
 		});
@@ -153,7 +154,7 @@ public class DeleteAccountFragment extends Fragment {
 		builder.show();
 	}
 
-	private void moveToRegisterPage() {
+	private void moveToRegisterPage() {		
 		Intent moveToRegisterPage = new Intent(getActivity(),
 				MainActivity.class);
 		getActivity().startActivity(moveToRegisterPage);
@@ -162,18 +163,11 @@ public class DeleteAccountFragment extends Fragment {
 
 	private void deleteAccountData() {
 		Context context = getActivity();
-		DeleteAccountRunnable dataDeleterRunnable = new DeleteAccountRunnable(context, dataDeletionHandler);
+		DeleteAccountRunnable dataDeleterRunnable = new DeleteAccountRunnable(
+				context, dataDeletionHandler);
 		Thread dataDeleterThread = new Thread(dataDeleterRunnable);
 		dataDeleterThread.setDaemon(true);
-		dataDeleterThread.start();		
-		showDeletionProgress();
-		
-		
-	}
-
-	private void showDeletionProgress() {
-		deleteProgress = ProgressDialog.show(getActivity(), "Deleting User Data",
-				"Please wait while the app data is deleted");
+		dataDeleterThread.start();
 	}
 
 	

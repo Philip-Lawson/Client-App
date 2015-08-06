@@ -48,8 +48,6 @@
     <string name="storage_option_sd_card">SD Card</string>
     <string name="show_notifications_key">Show Notifications Key</string>
     <string name="show_notifications_title">Show Notifications</string>
-    
-    
     <string name="email_key">Email Key</string>
     <string name="email_settings_title">Email</string>
     <string name="default_anonymous_email_summary">No Email Stored</string>
@@ -87,36 +85,38 @@
     <!-- Strings for About Fragment -->
     <string name="about_page_id">About Page ID</string>
     <string name="about_page_text">This is a placeholder this is a placeholder this is a placeholder this is a placeholder</string>
-	<string name="about_page_donate_button_id">Donate Button ID</string>
-	<string name="about_page_donate_button_text">Donate</string>
-	
-	<!-- Strings for My Account page -->
-	<string name="my_account_packets_processed_title_id">Packets Processed Title</string>
-	<string name="my_account_packets_processed_title_text">Work Complete</string>
-	<string name="my_account_num_packets_processed_id">Number of packets processed</string>
-	<string name="my_account_num_packets_processed_text_part1">This device has processed </string>
-	<string name="my_account_num_packets_processed_text_part2"> calculations</string>
-	<string name="my_account_processing_button_id"></string>
-	<string name="my_account_processing_button_startup_text">Begin Processing</string>
-	<string name="my_account_processing_button_stop_processing_text">Stop Processing</string>
-	<string name="my_account_processing_button_start_processing_text">Start Processing</string>
-	<string name="my_account_email_title_id">Email Title ID</string>
-	<string name="my_account_email_title_text">Email</string>
-	<string name="my_account_email_text_id">Change Email Text</string>
-	<string name="my_account_email_default_text">No Email Saved</string>
-	<string name="my_account_anonymous_user_checked_text_view_id">Anon CheckedTextView</string>
-	<string name="my_account_anonymous_user_checked_text_view_text">Anonymous User</string>
-	<string name="my_account_change_email_button_id">Change Email Button ID</string>
-	<string name="my_account_change_email_button_text">Change Email</string>
-	<string name="my_account_remain_anonymous_checked_text_id">Checked text view ID</string>
-	
-	<!-- Strings for the change email dialog -->
-	<string name="change_email_edit_text_id">Change Email EditText</string>
-	<string name="change_email_remain_anonymous_check_id">Anonymous check box</string>
-	
-	<!-- Strings for the Delete Account Page -->
-	<string name="delete_account_page_title">Delete Account</string>
-	<string name="delete_account_button_id">Delete Account Button ID</string>
-	<string name="delete_account_button_text">Delete Account</string>
-	
+    <string name="about_page_donate_button_id">Donate Button ID</string>
+    <string name="about_page_donate_button_text">Donate</string>
+
+    <!-- Strings for My Account page -->
+    <string name="my_account_packets_processed_title_id">Packets Processed Title</string>
+    <string name="my_account_packets_processed_title_text">Work Complete</string>
+    <string name="my_account_num_packets_processed_id">Number of packets processed</string>
+    <string name="my_account_num_packets_processed_text_part1">This device has processed </string>
+    <string name="my_account_num_packets_processed_text_part2"> calculations</string>
+    <string name="my_account_processing_button_id"></string>
+    <string name="my_account_processing_button_startup_text">Begin Processing</string>
+    <string name="my_account_processing_button_stop_processing_text">Stop Processing</string>
+    <string name="my_account_processing_button_start_processing_text">Start Processing</string>
+    <string name="my_account_email_title_id">Email Title ID</string>
+    <string name="my_account_email_title_text">Email</string>
+    <string name="my_account_email_text_id">Change Email Text</string>
+    <string name="my_account_email_default_text">No Email Saved</string>
+    <string name="my_account_anonymous_user_checked_text_view_id">Anon CheckedTextView</string>
+    <string name="my_account_anonymous_user_checked_text_view_text">Anonymous User</string>
+    <string name="my_account_change_email_button_id">Change Email Button ID</string>
+    <string name="my_account_change_email_button_text">Change Email</string>
+    <string name="my_account_remain_anonymous_checked_text_id">Checked text view ID</string>
+
+    <!-- Strings for the change email dialog -->
+    <string name="change_email_edit_text_id">Change Email EditText</string>
+    <string name="change_email_remain_anonymous_check_id">Anonymous check box</string>
+
+    <!-- Strings for the Delete Account Page -->
+    <string name="delete_account_page_title">Delete Account</string>
+    <string name="delete_account_textview_id">Delete Account TextView</string>
+    <string name="delete_account_textview_text">When your account is deleted all of the app\'s data will be deleted and we will delete your details from our servers. Once your account is deleted you will be returned to the Register page.</string>
+    <string name="delete_account_button_id">Delete Account Button ID</string>
+    <string name="delete_account_button_text">Delete Account</string>
+
 </resources>
