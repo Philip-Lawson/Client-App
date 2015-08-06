@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   
+        <EditTextPreference
+            android:hint=""
+            android:inputType="textEmailAddress"
+            android:key="@string/email_key"
+            android:summary="@string/default_anonymous_email_summary" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/anonymous_key"
+            android:title="@string/anonymous_user_description" />
+   
+
+</PreferenceScreen>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Volunteer Science!</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="is_registered_key">Is Registered?</string>
+    <string name="user_permits_processing_key">User Permits Processing</string>
+
+    <!-- Strings for Register Page -->
+    <string name="register_email_field_id">Email Field</string>
+    <string name="register_email_field_text">Email Address</string>
+    <string name="register_email_invalid_email_id">Invalid Email</string>
+    <string name="register_button_id">Register Button</string>
+    <string name="register_button_text">Register</string>
+    <string name="register_anonymously_checked_textview_id">Register Anon</string>
+    <string name="register_anonymously_text">I want to remain anonymous</string>
+    <string name="registration_dialog_title">Registering</string>
+    <string name="registration_dialog_text">Communicating with the server</string>
+    <string name="registration_successful_title"></string>
+    <string name="registration_successful_text">Registration Complete</string>
+    <string name="registration_unsuccessful_title">Registration Unsuccessful</string>
+    <string name="registration_unsuccessful_text">Please try again later</string>
+
+    <!-- Strings for network unavailable -->
+    <string name="network_unavailable_title">Network Unavailable</string>
+    <string name="network_unavailable_text">Please try again when Wifi is available</string>
+
+    <!-- Strings for settings -->
+    <string name="settings_page_title">Settings</string>
+    <string name="charging_key">Charging Key</string>
+    <string name="charging_title">Charging</string>
+    <string name="charging_description_true">Process data while charging</string>
+    <string name="charging_description_false">Ignore charging status</string>
+    <string name="battery_limit_key">Battery limit key</string>
+    <string name="battery_limit_title">Battery Limit</string>
+    <string name="battery_limit_dialog_title">Stop processing when battery drops below</string>
+    <string name="wifi_key">Wifi Key</string>
+    <string name="network_settings_title">Network Settings</string>
+    <string name="network_settings_dialog_title">Network Settings</string>
+    <string name="network_description_wifi">Wifi only</string>
+    <string name="network_description_wfi_data">Wifi and Data</string>
+    <string name="storage_key">Storage Key</string>
+    <string name="storage_settings_title">Data Storage</string>
+    <string name="storage_title">Data Storage</string>
+    <string name="storage_dialog_title">Store data in</string>
+    <string name="storage_option_internal">Internal Memory</string>
+    <string name="storage_option_sd_card">SD Card</string>
+    <string name="show_notifications_key">Show Notifications Key</string>
+    <string name="show_notifications_title">Show Notifications</string>
+    
+    
+    <string name="email_key">Email Key</string>
+    <string name="email_settings_title">Email</string>
+    <string name="default_anonymous_email_summary">No Email Stored</string>
+    <string name="anonymous_key">Anonymous</string>
+    <string name="anonymous_user_description">Remain anonymous</string>
+    <string name="invalid_email_title">Invalid Email</string>
+    <string name="invalid_email_text">It looks like that isn\'t a valid email. Please try again.</string>
+    <string name="settings_activity_id">Settings Activity ID</string>
+    <string name="save_settings_button_id">Save Settings</string>
+    <string name="save_settings_button_text">Save</string>
+    <string name="tasks_list_key"></string>
+
+    <!-- Strings for Account Page -->
+    <string name="packets_completed_key">Packets Completed</string>
+    <string name="packets_complete_text">Number of Packets Completed: </string>
+
+    <!-- Strings for processing notifications -->
+    <string name="processing_title">Processing Data</string>
+    <string name="processing_complete">Processing Complete!</string>
+    <string name="processing_packets">Processing Data</string>
+    <string name="processing_paused">Below Battery Limit: Processing Paused</string>
+
+    <!-- Strings for main page -->
+    <string name="main_page_id"></string>
+    <!-- Strings for the menu action bar -->
+    <string name="account_button_id">Account Button</string>
+    <string name="account_button_title">My Account</string>
+    <string name="settings_button_id">Settings Button</string>
+    <string name="settings_button_title">Settings</string>
+    <string name="about_button_id">About Button</string>
+    <string name="about_button_title">About</string>
+
+    <!-- Strings for About Fragment -->
+    <string name="about_page_id">About Page ID</string>
+    <string name="about_page_text">This is a placeholder this is a placeholder this is a placeholder this is a placeholder</string>
+	<string name="about_page_donate_button_id">Donate Button ID</string>
+	<string name="about_page_donate_button_text">Donate</string>
+	
+	<!-- Strings for My Account page -->
+	<string name="my_account_packets_processed_title_id">Packets Processed Title</string>
+	<string name="my_account_packets_processed_title_text">Work Complete</string>
+	<string name="my_account_num_packets_processed_id">Number of packets processed</string>
+	<string name="my_account_num_packets_processed_text_part1">This device has processed </string>
+	<string name="my_account_num_packets_processed_text_part2"> calculations</string>
+	<string name="my_account_processing_button_id"></string>
+	<string name="my_account_processing_button_startup_text">Begin Processing</string>
+	<string name="my_account_processing_button_stop_processing_text">Stop Processing</string>
+	<string name="my_account_processing_button_start_processing_text">Start Processing</string>
+	<string name="my_account_email_title_id">Email Title ID</string>
+	<string name="my_account_email_title_text">Email</string>
+	<string name="my_account_email_text_id">Change Email Text</string>
+	<string name="my_account_email_default_text">No Email Saved</string>
+	<string name="my_account_anonymous_user_checked_text_view_id">Anon CheckedTextView</string>
+	<string name="my_account_anonymous_user_checked_text_view_text">Anonymous User</string>
+	<string name="my_account_change_email_button_id">Change Email Button ID</string>
+	<string name="my_account_change_email_button_text">Change Email</string>
+	<string name="my_account_remain_anonymous_checked_text_id">Checked text view ID</string>
+	
+	<!-- Strings for the change email dialog -->
+	<string name="change_email_edit_text_id">Change Email EditText</string>
+	<string name="change_email_remain_anonymous_check_id">Anonymous check box</string>
+	
+	<!-- Strings for the Delete Account Page -->
+	<string name="delete_account_button_id">Delete Account Button ID</string>
+	
+</resources>
