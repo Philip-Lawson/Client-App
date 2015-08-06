@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@string/account_button_id"
+        android:icon="@drawable/ic_action_person"
+        android:title="@string/account_button_title"
+        app:showAsAction="ifRoom"/>   
+    <item
+        android:id="@string/settings_button_id"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/settings_button_title"
+        app:showAsAction="never"/>
+     <item
+        android:id="@string/about_button_id"
+        android:icon="@drawable/ic_action_about"
+        android:title="@string/about_button_title"
+        app:showAsAction="never"/>
+     <item
+         android:id="@string/delete_account_menu_button_id"          
+         android:title="@string/delete_account_button_title"
+         app:showAsAction="never"/>
+
+</menu>

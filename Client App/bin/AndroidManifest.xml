@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="uk.ac.qub.finalproject.client.views"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="22" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="uk.ac.qub.finalproject.client.views.SplashActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="uk.ac.qub.finalproject.client.views.MainActivity"
+            android:label="Register" >
+        </activity>
+        <activity
+            android:name="uk.ac.qub.finalproject.client.views.SettingsActivity"
+            android:label="@string/settings_page_title" >
+        </activity>
+        <activity
+            android:name="uk.ac.qub.finalproject.client.views.MainPage"
+            android:label="@string/main_page_id" >
+        </activity>
+
+        <service android:name="uk.ac.qub.finalproject.client.services.ChangeEmailAddressService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.DataProcessingService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.DormantService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.LoadProcessingClassService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.NetworkService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.RequestWorkPacketsService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.SendResultsService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.BatteryMonitorService" />
+
+        <receiver
+            android:name="uk.ac.qub.finalproject.client.views.NetworkInfoReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" >
+                </action>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="uk.ac.qub.finalproject.client.views.BatteryLevelBroadcastReceiver" />
+    </application>
+
+</manifest>
