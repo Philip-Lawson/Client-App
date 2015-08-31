@@ -5,10 +5,10 @@ package uk.ac.qub.finalproject.client.services;
 
 import java.util.concurrent.Callable;
 
-import finalproject.poc.calculationclasses.CalculationPacket;
-import finalproject.poc.calculationclasses.IDataProcessor;
-import finalproject.poc.calculationclasses.ResultsPacketList;
-import finalproject.poc.calculationclasses.WorkPacketList;
+import uk.ac.qub.finalproject.calculationclasses.CalculationPacket;
+import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
+import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
 
 /**
  * @author Phil

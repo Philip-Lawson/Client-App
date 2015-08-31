@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -153,13 +154,15 @@ public class MainActivity extends ActionBarActivity {
 				boolean validEmailAddress = EmailValidator
 						.emailIsValid(emailAddress);
 
-				if (anonymousField.isChecked() || validEmailAddress) {
-					RegistrationPack registrationPack = new RegistrationPack();
-					registrationPack.setAndroidID(Secure.getString(
-							getContentResolver(), Secure.ANDROID_ID));
+				if (anonymousField.isChecked() || validEmailAddress) {					
 
 					SharedPreferences pref = PreferenceManager
 							.getDefaultSharedPreferences(getBaseContext());
+					
+					RegistrationPack registrationPack = new RegistrationPack();
+					registrationPack.setAndroidID(Secure.getString(
+							getContentResolver(), Secure.ANDROID_ID));					
+					registrationPack.setVersionCode(getAppVersion());
 
 					if (anonymousField.isChecked()) {
 						// store the user's preference for anonymity in shared
@@ -181,14 +184,8 @@ public class MainActivity extends ActionBarActivity {
 										emailAddress).apply();
 
 					}
-
-					// initiate registration
-					RunnableClientTemplate registerClient = new RegisterClientThread(
-							getBaseContext(), registrationPack,
-							registrationHandler);
-					Thread registrationThread = new Thread(registerClient);
-					registrationThread.setDaemon(true);
-					registrationThread.start();
+					
+					startRegistration(registrationPack);
 					showProgress();
 				} else {
 					// notify the user of an invalid email address
@@ -234,6 +231,15 @@ public class MainActivity extends ActionBarActivity {
 		registrationMessage.show(fragment, "registration");
 
 	}
+	
+	private void startRegistration(RegistrationPack registrationPack){
+		RunnableClientTemplate registerClient = new RegisterClientThread(
+				getBaseContext(), registrationPack,
+				registrationHandler);
+		Thread registrationThread = new Thread(registerClient);
+		registrationThread.setDaemon(true);
+		registrationThread.start();
+	}
 
 	/**
 	 * Shows a progress dialog for registration in case the network is slow and
@@ -274,6 +280,14 @@ public class MainActivity extends ActionBarActivity {
 		 * they want to change their details they can do so in the settings page
 		 */
 		finish();
+	}
+	
+	private int getAppVersion(){
+		try {
+			return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			return 0;
+		}
 	}
 
 	/**

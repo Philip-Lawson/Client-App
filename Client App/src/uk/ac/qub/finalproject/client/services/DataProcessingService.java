@@ -51,8 +51,9 @@ public class DataProcessingService extends Service {
 
 	@Override
 	public void onDestroy() {
-		if (dataProcessingRunnable.isProcessing())
+		if (dataProcessingRunnable.isProcessing()) {
 			notifyProcessingPaused();
+		}			
 
 		dataProcessingRunnable.stopRunnable();
 		super.onDestroy();
@@ -65,7 +66,6 @@ public class DataProcessingService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

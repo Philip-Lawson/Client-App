@@ -1,7 +1,7 @@
 /**
  * 
  */
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
 
 import java.io.Serializable;
 

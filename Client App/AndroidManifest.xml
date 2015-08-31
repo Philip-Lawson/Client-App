@@ -47,6 +47,7 @@
         <service android:name="uk.ac.qub.finalproject.client.services.RequestWorkPacketsService" />
         <service android:name="uk.ac.qub.finalproject.client.services.SendResultsService" />
         <service android:name="uk.ac.qub.finalproject.client.services.BatteryMonitorService" />
+        <service android:name="uk.ac.qub.finalproject.client.services.StopAllProcessingService" />
 
         <receiver
             android:name="uk.ac.qub.finalproject.client.views.NetworkInfoReceiver"

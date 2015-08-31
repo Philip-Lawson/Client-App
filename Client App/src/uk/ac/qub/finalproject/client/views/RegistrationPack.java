@@ -18,6 +18,7 @@ public class RegistrationPack implements Serializable {
 
 	private String androidID;
 	private String emailAddress;	
+	private int versionCode;
 
 	public String getAndroidID() {
 		return androidID;
@@ -37,6 +38,14 @@ public class RegistrationPack implements Serializable {
 
 	public boolean hasEmailAddress(){
 		return null!= emailAddress ;
+	}
+
+	public int getVersionCode() {
+		return versionCode;
+	}
+
+	public void setVersionCode(int versionCode) {
+		this.versionCode = versionCode;
 	}
 
 }

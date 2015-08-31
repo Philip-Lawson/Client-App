@@ -60,7 +60,6 @@ public class DormantService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -73,8 +72,14 @@ public class DormantService extends Service {
 	}
 
 	private void checkForNewActivity() {
-		Intent intent = new Intent(this, RequestWorkPacketsService.class);
-		startActivity(intent);
+		long totalSpace = getFilesDir().getTotalSpace();
+		long usableSpace = getFilesDir().getUsableSpace();
+		int percentSpaceAvailable = (int) (usableSpace / (double) totalSpace * 100);
+
+		if (percentSpaceAvailable > 10) {
+			Intent intent = new Intent(this, RequestWorkPacketsService.class);
+			startActivity(intent);
+		}
 	}
 
 }

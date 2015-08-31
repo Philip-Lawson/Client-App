@@ -1,7 +1,7 @@
 /**
  * 
  */
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
 
 import java.io.Serializable;
 
@@ -37,7 +37,7 @@ public class WorkPacket extends AbstractWorkPacket implements Serializable {
 	 * @param initialData
 	 *            the data to be processed
 	 */
-	public WorkPacket(Object initialData) {
+	public WorkPacket(Serializable initialData) {
 		super(initialData);
 	}
 
@@ -50,7 +50,7 @@ public class WorkPacket extends AbstractWorkPacket implements Serializable {
 	 * @param initialData
 	 *            the data to be processed
 	 */
-	public WorkPacket(String packetId, Object initialData) {
+	public WorkPacket(String packetId, Serializable initialData) {
 		super(packetId, initialData);
 	}
 

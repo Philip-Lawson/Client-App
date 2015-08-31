@@ -3,9 +3,9 @@
  */
 package uk.ac.qub.finalproject.client.services;
 
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
-import finalproject.poc.calculationclasses.ResultsPacketList;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;

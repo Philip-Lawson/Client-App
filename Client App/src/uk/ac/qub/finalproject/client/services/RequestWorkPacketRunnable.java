@@ -8,6 +8,7 @@ import java.io.IOException;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import android.app.Service;
 import android.content.Context;
+import android.provider.Settings.Secure;
 
 /**
  * @author Phil
@@ -31,8 +32,11 @@ public class RequestWorkPacketRunnable extends RunnableClientTemplate {
 
 	@Override
 	protected void communicateWithServer() throws IOException {
+		String deviceID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+		
 		output.reset();
 		output.writeInt(ClientRequest.REQUEST_WORK_PACKET);
+		output.writeObject(deviceID);
 		output.flush();
 	}
 

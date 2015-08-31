@@ -1,7 +1,9 @@
 /**
  * 
  */
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
+
+import java.io.Serializable;
 
 /**
  * Abstract implementation of IResultsPacket. To be sent from the client device
@@ -27,7 +29,7 @@ public abstract class AbstractResultsPacket implements IResultsPacket {
 	/**
 	 * The processed data.
 	 */
-	private Object result;
+	private Serializable result;
 
 	@Override
 	public void setPacketId(String packetId) {
@@ -40,12 +42,12 @@ public abstract class AbstractResultsPacket implements IResultsPacket {
 	}
 
 	@Override
-	public void setResult(Object result) {
+	public void setResult(Serializable result) {
 		this.result = result;
 	}
 
 	@Override
-	public Object getResult() {
+	public Serializable getResult() {
 		return result;
 	}
 		

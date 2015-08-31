@@ -5,8 +5,8 @@ package uk.ac.qub.finalproject.client.services;
 
 import java.io.IOException;
 
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
-import finalproject.poc.calculationclasses.ResultsPacketList;
 import android.app.Service;
 import android.content.Context;
 import android.provider.Settings.Secure;

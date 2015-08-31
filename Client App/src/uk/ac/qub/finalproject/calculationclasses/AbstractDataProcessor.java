@@ -1,7 +1,9 @@
 /**
  * 
  */
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
+
+import java.io.Serializable;
 
 /**
  * Abstract implementation of IDataProcessor. This class processes the work
@@ -30,7 +32,9 @@ public abstract class AbstractDataProcessor implements IDataProcessor {
 	@Override
 	public final IResultsPacket execute(IWorkPacket workPacket) {
 		IResultsPacket resultsPacket = new ResultsPacket();
-		resultsPacket.setResult(processData(workPacket.getInitialData()));
+		Serializable data = processData(workPacket.getInitialData());
+		
+		resultsPacket.setResult(data);
 		resultsPacket.setPacketId(workPacket.getPacketId());
 
 		return resultsPacket;
@@ -44,6 +48,6 @@ public abstract class AbstractDataProcessor implements IDataProcessor {
 	 *            object within the method.
 	 * @return the processed data
 	 */
-	protected abstract Object processData(Object obj);
+	protected abstract Serializable processData(Serializable obj);
 
 }

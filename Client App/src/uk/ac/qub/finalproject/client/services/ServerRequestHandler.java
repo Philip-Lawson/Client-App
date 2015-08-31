@@ -7,14 +7,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OptionalDataException;
 
+import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
+import uk.ac.qub.finalproject.calculationclasses.ProcessingClassLoader;
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
+import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
 import uk.ac.qub.finalproject.client.views.R;
-
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
-import finalproject.poc.calculationclasses.IDataProcessor;
-import finalproject.poc.calculationclasses.ProcessingClassLoader;
-import finalproject.poc.calculationclasses.ResultsPacketList;
-import finalproject.poc.calculationclasses.WorkPacketList;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -55,7 +54,7 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 	@Override
 	protected void loadProcessingClass(ObjectInputStream input) {
 
-		DataStorage workDB = new FileAndPrefStorage(context);				
+		DataStorage workDB = new FileAndPrefStorage(context);
 		workDB.logNetworkRequest(ClientRequest.REQUEST_PROCESSING_CLASS);
 
 		try {
@@ -94,7 +93,7 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 
 			workDB.saveWorkPacketList(workPacketList);
 			workDB.saveResultsPacketList(new ResultsPacketList());
-			
+
 			if (canStartProcessing()) {
 				Intent i = new Intent(context, DataProcessingService.class);
 				context.startService(i);
@@ -117,8 +116,8 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 
-		return (isCharging(batteryInfo, pref)
-				|| aboveThreshold(batteryInfo, pref)) && userPermitsProcessing(pref);
+		return (isCharging(batteryInfo, pref) || aboveThreshold(batteryInfo,
+				pref)) && userPermitsProcessing(pref);
 	}
 
 	private boolean isCharging(Intent batteryInfo, SharedPreferences pref) {
@@ -126,28 +125,29 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 				context.getString(R.string.charging_key), true);
 		int batteryStatus = batteryInfo.getIntExtra(
 				BatteryManager.EXTRA_STATUS, -1);
-		boolean charging = batteryStatus == BatteryManager.BATTERY_PLUGGED_AC || batteryStatus == BatteryManager.BATTERY_PLUGGED_USB;
+		boolean charging = ((batteryStatus == BatteryManager.BATTERY_PLUGGED_AC) || (batteryStatus == BatteryManager.BATTERY_PLUGGED_USB));
 
 		return chargingEnabled && charging;
-				
+
 	}
-	
-	private boolean userPermitsProcessing(SharedPreferences pref){
-		return pref.getBoolean(context.getString(R.string.user_permits_processing_key), true);
+
+	private boolean userPermitsProcessing(SharedPreferences pref) {
+		return pref.getBoolean(
+				context.getString(R.string.user_permits_processing_key), true);
 	}
 
 	private boolean aboveThreshold(Intent batteryInfo, SharedPreferences pref) {
 		String chargingPref = pref.getString(
-				context.getString(R.string.battery_limit_key), "0");		
-		int chargeLimit = Integer.parseInt(chargingPref);		
-		
+				context.getString(R.string.battery_limit_key), "0");
+		int chargeLimit = Integer.parseInt(chargingPref);
+
 		int level = batteryInfo.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = batteryInfo.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-		
+
 		double currentCharge = scale / (double) level;
 		double percentageThreshold = chargeLimit / 100.0;
 
 		return currentCharge > percentageThreshold;
 	}
-	
+
 }

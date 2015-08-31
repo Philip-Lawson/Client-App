@@ -40,23 +40,23 @@ public class NetworkInfoReceiver extends BroadcastReceiver {
 		String networkKey = context.getString(R.string.wifi_key);
 		String wifiOnly = context.getString(R.string.network_description_wifi);
 
-		if (isConnected(pref, networkKey, wifiOnly, networkInfo.getType()) && networkInfo.isConnected()) {			
+		if (isConnected(pref, networkKey, wifiOnly, networkInfo.getType())
+				&& networkInfo.isConnected()) {
 			Intent i = new Intent(context, NetworkService.class);
-			context.startService(i);			
+			context.startService(i);
 		}
 
 	}
 
-	private boolean isConnected(SharedPreferences pref, String networkKey, String wifiOnly,
-			int networkInfo) {
+	private boolean isConnected(SharedPreferences pref, String networkKey,
+			String wifiOnly, int networkInfo) {
 
-		if (pref.getString(networkKey, wifiOnly).equals(wifiOnly))
-			return networkInfo == ConnectivityManager.TYPE_WIFI ;
-		else
+		if (pref.getString(networkKey, wifiOnly).equals(wifiOnly)) {
+			return networkInfo == ConnectivityManager.TYPE_WIFI;
+		} else {
 			return networkInfo == ConnectivityManager.TYPE_WIFI
 					|| networkInfo == ConnectivityManager.TYPE_MOBILE;
+		}
 	}
-	
-	
 
 }

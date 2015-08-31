@@ -9,17 +9,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import uk.ac.qub.finalproject.calculationclasses.CalculationPacket;
+import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
+import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
 import uk.ac.qub.finalproject.client.views.R;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
-import finalproject.poc.calculationclasses.CalculationPacket;
-import finalproject.poc.calculationclasses.IDataProcessor;
-import finalproject.poc.calculationclasses.ResultsPacketList;
-import finalproject.poc.calculationclasses.WorkPacketList;
 
 /**
  * This runnable manages the processing and storage of work and results packets.
@@ -113,68 +112,79 @@ public class DataProcessingRunnable implements Runnable {
 
 		// stop the service if processing cannot be completed at this point
 		if (null == processor || workPackets.size() < 1) {
-			dataProcessingService.stopSelf();
-		}
-
-		// set up the thread pool, callable and calculation objects
-		isProcessing = true;
-		ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-		DataProcessorCallable dataProcessor = new DataProcessorCallable();
-		dataProcessor.setDataProcessor(processor);
-		Callable<CalculationPacket> processorThread;
-		CalculationPacket calculationPacket = new CalculationPacket();
-
-		while (workPackets.size() > 0 && canContinue) {
-			// set work and result packets
-			workPackets = workStorage.loadWorkPacketList();
-			resultPackets = workStorage.loadResultsPacketList();
-			calculationPacket.setWorkPacketList(workPackets);
-			calculationPacket.setResultsPacketList(resultPackets);
-
-			// notify the user of current progress
-			// if the process has been stopped we don't want to show a
-			// progress bar to the user.
-			if (canContinue) {
-				dataProcessingService.updateProgress(resultPackets.size(),
-						workPackets.size());
-			}
-
-			// prepare the callable
-			dataProcessor.setPacket(calculationPacket);
-			processorThread = dataProcessor;
-			Future<CalculationPacket> future = executor.submit(processorThread);
-
-			// start processing and save the result when done
 			try {
-				calculationPacket = future.get();
-				resultPackets = calculationPacket.getResultsPacketList();
-				workPackets = calculationPacket.getWorkPacketList();
+				dataProcessingService.stopSelf();
+			} catch (NullPointerException NPEx){
+				// the service has been killed by the android OS
+			}			
+		} else {
 
-				workStorage.saveResultsPacketList(resultPackets);
-				workStorage.saveWorkPacketList(workPackets);
+			// set up the thread pool, callable and calculation objects
+			isProcessing = true;
+			ExecutorService executor = Executors
+					.newSingleThreadScheduledExecutor();
+			DataProcessorCallable dataProcessor = new DataProcessorCallable();
+			dataProcessor.setDataProcessor(processor);
+			Callable<CalculationPacket> processorThread;
+			CalculationPacket calculationPacket = new CalculationPacket();
 
-				workProcessed = true;
-				updatePacketsProcessed();
+			while (workPackets.size() > 0 && canContinue) {
+				// set work and result packets
+				workPackets = workStorage.loadWorkPacketList();
+				resultPackets = workStorage.loadResultsPacketList();
+				resultPackets.setTimeStamp(workPackets.getTimeStamp());
 
-			} catch (InterruptedException e) {
-				// TODO log exception?
-			} catch (ExecutionException e) {
-				// TODO log exception?
+				calculationPacket.setWorkPacketList(workPackets);
+				calculationPacket.setResultsPacketList(resultPackets);
+
+				// notify the user of current progress
+				// if the process has been stopped we don't want to show a
+				// progress bar to the user.
+				if (canContinue) {
+					dataProcessingService.updateProgress(resultPackets.size(),
+							workPackets.size());
+				}
+
+				// prepare the callable
+				dataProcessor.setPacket(calculationPacket);
+				processorThread = dataProcessor;
+				Future<CalculationPacket> future = executor
+						.submit(processorThread);
+
+				// start processing and save the result when done
+				try {
+					calculationPacket = future.get();
+					resultPackets = calculationPacket.getResultsPacketList();
+					workPackets = calculationPacket.getWorkPacketList();
+
+					workStorage.saveResultsPacketList(resultPackets);
+					workStorage.saveWorkPacketList(workPackets);
+
+					workProcessed = true;
+					updatePacketsProcessed();
+
+				} catch (InterruptedException e) {
+					// TODO log exception?
+				} catch (ExecutionException e) {
+					// TODO log exception?
+				}
+
 			}
 
-		}
+			// if processing is complete the processor will ask the service to
+			// start
+			// the send results service
+			if (workProcessed && workPackets.size() == 0) {
+				isProcessing = false;
 
-		// if processing is complete the service will
-		if (workProcessed && workPackets.size() == 0) {
-			isProcessing = false;
+				try {
+					dataProcessingService.notifyProcessingComplete();
+					dataProcessingService.startResultService();
+				} catch (NullPointerException NPEx) {
+					workStorage.logNetworkRequest(ClientRequest.PROCESS_RESULT);
+				}
 
-			try {
-				dataProcessingService.notifyProcessingComplete();
-				dataProcessingService.startResultService();
-			} catch (NullPointerException NPEx) {
-				workStorage.logNetworkRequest(ClientRequest.PROCESS_RESULT);
 			}
-
 		}
 
 	}

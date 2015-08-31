@@ -5,27 +5,39 @@ package uk.ac.qub.finalproject.client.persistence;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.qub.finalproject.client.views.R;
-
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import finalproject.poc.calculationclasses.IDataProcessor;
-import finalproject.poc.calculationclasses.ResultsPacketList;
-import finalproject.poc.calculationclasses.WorkPacketList;
+import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
+import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
+import uk.ac.qub.finalproject.client.implementations.Implementations;
+import uk.ac.qub.finalproject.client.services.StopAllProcessingService;
+import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * An implementation of the Data Storage interface. This stores the results list
+ * and work packet list in the underlying filing system of the device. It takes
+ * the user's preference for internal/external storage into account, but
+ * defaults to internal storage if external storage is unavailable.
+ * 
+ * This implementation takes possible SD card removal into account while
+ * retrieving data. If internal storage becomes higher than 90% all processing
+ * action are stopped, and the dormant service is initiated. Processing will
+ * resume once enough storage space becomes available.
+ * 
  * @author Phil
  *
  */
@@ -46,13 +58,23 @@ public class FileAndPrefStorage implements DataStorage {
 		this.context = context;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uk.ac.qub.finalproject.client.persistence.DataStorage#setupStorage()
+	 */
 	@Override
 	public void setupStorage() {
-		saveResultsPacketList(new ResultsPacketList());
 		saveWorkPacketList(new WorkPacketList());
-		saveProcessorClass(null);
+		saveResultsPacketList(new ResultsPacketList());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#deleteAllData()
+	 */
 	@Override
 	public void deleteAllData() {
 		String[] files = { WORK_LIST_FILENAME, RESULTS_LIST_FILENAME,
@@ -62,24 +84,13 @@ public class FileAndPrefStorage implements DataStorage {
 			deleteFileFromInternal(file);
 			deleteFileFromExternal(file);
 		}
-		
+
 		if (isExternalStorageWritable()) {
 			File dir = new File(
 					context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
 					DIRECTORY_NAME);
 			dir.delete();
 		}
-		
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#openDatabase()
-	 */
-	@Override
-	public void openDatabase() {
 
 	}
 
@@ -87,19 +98,8 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#closeDatabase()
-	 */
-	@Override
-	public void closeDatabase() {
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#saveResultsPacketList
-	 * (finalproject.poc.calculationclasses.ResultsPacketList)
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#saveResultsPacketList
+	 * (uk.ac.qub.finalproject.calculationclasses.ResultsPacketList)
 	 */
 	@Override
 	public void saveResultsPacketList(ResultsPacketList resultsList) {
@@ -111,63 +111,131 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#loadResultsPacketList
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#loadResultsPacketList
 	 * ()
 	 */
 	@Override
 	public ResultsPacketList loadResultsPacketList() {
-		ResultsPacketList resultsPacketList = (ResultsPacketList) readFile(RESULTS_LIST_FILENAME);
+		ResultsPacketList internalList = (ResultsPacketList) blankList(RESULTS_LIST_FILENAME);
+		ResultsPacketList externalList = (ResultsPacketList) blankList(RESULTS_LIST_FILENAME);
 
-		if (null == resultsPacketList) {
-			resultsPacketList = new ResultsPacketList();
+		try {
+			internalList = (ResultsPacketList) readFileFromInternal(RESULTS_LIST_FILENAME);
+		} catch (IOException e) {
+
+		} catch (ClassNotFoundException e) {
+
 		}
 
-		return resultsPacketList;
+		try {
+			if (isExternalStorageReadable()) {
+				externalList = (ResultsPacketList) readFileFromExternal(RESULTS_LIST_FILENAME);
+			}
+		} catch (IOException e) {
 
+		} catch (ClassNotFoundException e) {
+
+		}
+
+		internalList.addAll(externalList);
+
+		if (null == internalList.getTimeStamp()
+				&& null == externalList.getTimeStamp()) {
+			// if neither of the lists have time stamps
+			// that means they are both empty,
+			// the getTimeStamp method will not
+			// be called on an empty list
+
+		} else if (null == externalList.getTimeStamp()) {
+			// the internal list will have a time stamp
+		} else if (null == internalList.getTimeStamp()) {
+			internalList.setTimeStamp(externalList.getTimeStamp());
+		} else if (externalList.getTimeStamp() < internalList.getTimeStamp()) {
+			// set the timestamp to the earlier timestamp
+			// this will give a more accurate reflection of
+			// processing time needed
+			internalList.setTimeStamp(externalList.getTimeStamp());
+		}
+
+		return internalList;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#saveWorkPacketList
-	 * (finalproject.poc.calculationclasses.WorkPacketList)
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#saveWorkPacketList
+	 * (uk.ac.qub.finalproject.calculationclasses.WorkPacketList)
 	 */
 	@Override
 	public void saveWorkPacketList(WorkPacketList workPacketList) {
 		saveFile(WORK_LIST_FILENAME, workPacketList);
-
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#loadWorkPacketList
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#loadWorkPacketList
 	 * ()
 	 */
 	@Override
 	public WorkPacketList loadWorkPacketList() {
-		WorkPacketList workPacketsList = (WorkPacketList) readFile(WORK_LIST_FILENAME);
+		WorkPacketList internalList = (WorkPacketList) blankList(WORK_LIST_FILENAME);
+		WorkPacketList externalList = (WorkPacketList) blankList(WORK_LIST_FILENAME);
 
-		if (null == workPacketsList) {
-			workPacketsList = new WorkPacketList();
+		try {
+			internalList = (WorkPacketList) readFileFromInternal(WORK_LIST_FILENAME);
+		} catch (IOException e) {
+
+		} catch (ClassNotFoundException e) {
+
 		}
 
-		return workPacketsList;
+		try {
+			if (isExternalStorageReadable()) {
+				externalList = (WorkPacketList) readFileFromExternal(WORK_LIST_FILENAME);
+			}
+		} catch (IOException e) {
 
+		} catch (ClassNotFoundException e) {
+
+		}
+
+		internalList.addAll(externalList);
+
+		if (null == internalList.getTimeStamp()
+				&& null == externalList.getTimeStamp()) {
+			// if neither of the lists have time stamps
+			// that means they are both empty,
+			// the getTimeStamp method will not
+			// be called on an empty list
+
+		} else if (null == externalList.getTimeStamp()) {
+			// the internal list will have a time stamp
+		} else if (null == internalList.getTimeStamp()) {
+			internalList.setTimeStamp(externalList.getTimeStamp());
+		} else if (externalList.getTimeStamp() < internalList.getTimeStamp()) {
+			// set the timestamp to the earlier timestamp
+			// this will give a more accurate reflection of
+			// processing time needed
+			internalList.setTimeStamp(externalList.getTimeStamp());
+		}
+
+		return internalList;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#saveProcessorClass
-	 * (finalproject.poc.calculationclasses.IDataProcessor)
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#saveProcessorClass
+	 * (uk.ac.qub.finalproject.calculationclasses.IDataProcessor)
 	 */
 	@Override
 	public void saveProcessorClass(IDataProcessor dataProcessor) {
-		saveFileToInternal(PROCESSOR_CLASS_FILENAME, dataProcessor);
+		// Empty implementation. This will be used if dynamic
+		// class loading is implemented in the future.
 
 	}
 
@@ -175,16 +243,16 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * uk.ac.qub.finalproject.client.persistence.WorkDatabase#loadProcessorClass
+	 * uk.ac.qub.finalproject.client.persistence.DataStorage#loadProcessorClass
 	 * ()
 	 */
 	@Override
 	public IDataProcessor loadProcessorClass() {
-		try {
-			return (IDataProcessor) readFileFromInternal(PROCESSOR_CLASS_FILENAME);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
+		// Working on the assumption that dynamic class loading may be
+		// implemented in the future. Returning the processor from here means
+		// that the changes needed for loading are kept to this method. The data
+		// processing service classes will not need to be changed.
+		return Implementations.getDataProcessor();
 	}
 
 	/*
@@ -200,7 +268,7 @@ public class FileAndPrefStorage implements DataStorage {
 				.getDefaultSharedPreferences(context);
 		String requests = pref.getString(
 				context.getString(R.string.tasks_list_key), "");
-		String newRequest = Integer.valueOf(requestNum).toString();
+		String newRequest = requestNum + "";
 
 		if (!requests.contains(newRequest)) {
 			pref.edit()
@@ -229,7 +297,7 @@ public class FileAndPrefStorage implements DataStorage {
 				String num = requests.charAt(count) + "";
 				requestsList.add(Integer.parseInt(num));
 			} catch (NumberFormatException e) {
-				// don't add to list
+				// don't add to list if it's not a number!
 			}
 		}
 
@@ -249,7 +317,7 @@ public class FileAndPrefStorage implements DataStorage {
 				.getDefaultSharedPreferences(context);
 		String requests = pref.getString(
 				context.getString(R.string.tasks_list_key), "");
-		String numToDelete = Integer.valueOf(requestNum).toString();
+		String numToDelete = requestNum + "";
 
 		if (requests.contains(numToDelete)) {
 			String amendedRequests = requests.replace(numToDelete, "");
@@ -260,141 +328,107 @@ public class FileAndPrefStorage implements DataStorage {
 
 	}
 
-	public boolean transferFiles() {
-		// TODO - needs to be tightened to deal with storage issues
-		WorkPacketList workList = (WorkPacketList) readFile(WORK_LIST_FILENAME);
-		ResultsPacketList resultList = (ResultsPacketList) readFile(RESULTS_LIST_FILENAME);
+	private Serializable readFileFromInternal(String fileName)
+			throws OptionalDataException, ClassNotFoundException, IOException {
+		try {
+			fileIn = context.openFileInput(fileName);
+			in = new ObjectInputStream(fileIn);
 
-		if (null != workList && null != resultList) {
-			saveFile(WORK_LIST_FILENAME, workList);
-			saveFile(RESULTS_LIST_FILENAME, resultList);
-			return true;
-		} else {
-			return false;
+			// the finally block will complete before the return command
+			// to avoid reading from a potentially closed stream the object
+			// reference must be passed to a placeholder object
+			Serializable ser = (Serializable) in.readObject();
+			return ser;
+		} finally {
+			try {
+				if (null != in)
+					in.close();
+			} catch (IOException IOEx) {
+
+			}
+
+			try {
+				if (null != fileIn)
+					fileIn.close();
+			} catch (IOException IOEx) {
+
+			}
+		}
+	}
+
+	private Serializable readFileFromExternal(String fileName)
+			throws StreamCorruptedException, IOException,
+			ClassNotFoundException {
+		File dir = new File(
+				context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+				DIRECTORY_NAME);
+		File file = new File(dir, fileName);
+
+		try {
+
+			if (file.exists()) {
+				fileIn = new FileInputStream(file);
+				in = new ObjectInputStream(fileIn);
+				Serializable ser = (Serializable) in.readObject();
+				return ser;
+			}
+
+			// If the file doesn't exist we want to return a blank
+			// list - not a null object.
+			return blankList(fileName);
+
+		} finally {
+			// We only want to throw an exception if there's an issue reading
+			// the file. The calling method doesn't need to know about an
+			// exception closing the input streams.
+			try {
+				if (null != in)
+					in.close();
+			} catch (IOException IOEx) {
+
+			}
+
+			try {
+				if (null != fileIn)
+					fileIn.close();
+			} catch (IOException IOEx) {
+
+			}
+
 		}
 
 	}
 
 	private void saveFile(String fileName, Serializable ser) {
-		if (writeExternal()) {
+		if (writeToSDCardPreference()) {
 			saveFileToExternal(fileName, ser);
-			deleteFileFromInternal(fileName);
 		} else {
 			saveFileToInternal(fileName, ser);
-			deleteFileFromExternal(fileName);
 		}
 
-	}
-
-	private Object readFile(String fileName) {
-		try {
-			return readFileFromInternal(fileName);
-		} catch (FileNotFoundException Ex) {
-			if (isExternalStorageReadable()) {
-				return readFileFromExternal(fileName);
-			}
-		}
-
-		return null;
-	}
-
-	private Object readFileFromInternal(String fileName)
-			throws FileNotFoundException {
-
-		try {
-			fileIn = context.openFileInput(fileName);
-			in = new ObjectInputStream(fileIn);
-			return in.readObject();
-		} catch (StreamCorruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (null != in)
-					in.close();
-			} catch (IOException Ex) {
-
-			}
-			try {
-				if (null != fileIn)
-					fileIn.close();
-			} catch (IOException Ex) {
-
-			}
-		}
-		return null;
-	}
-
-	private Object readFileFromExternal(String fileName) {
-
-		try {
-			File dir = new File(
-					context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
-					DIRECTORY_NAME);
-			File file = new File(dir, fileName);
-
-			if (file.exists()) {
-				fileIn = new FileInputStream(file);
-				in = new ObjectInputStream(fileIn);
-				return in.readObject();
-			}
-		} catch (StreamCorruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (null != in)
-					in.close();
-			} catch (IOException Ex) {
-
-			}
-			try {
-				if (null != fileIn)
-					fileIn.close();
-			} catch (IOException Ex) {
-
-			}
-		}
-		return null;
 	}
 
 	private void saveFileToInternal(String fileName, Serializable ser) {
-		try {
-			fileOut = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-			out = new ObjectOutputStream(fileOut);
-			out.writeObject(ser);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+		long totalSpace = context.getFilesDir().getTotalSpace();
+		long usableSpace = context.getFilesDir().getUsableSpace();
+		int percentSpaceAvailable = (int) (usableSpace / (double) totalSpace * 100);
+
+		if (percentSpaceAvailable > 10) {
 			try {
-				if (null != out)
-					out.close();
-			} catch (IOException Ex) {
+
+				fileOut = context
+						.openFileOutput(fileName, Context.MODE_PRIVATE);
+				out = new ObjectOutputStream(fileOut);
+				out.writeObject(ser);
+			} catch (IOException e) {
 
 			}
-			try {
-				if (null != fileOut)
-					fileOut.close();
-			} catch (IOException Ex) {
 
-			}
+			deleteFileFromExternal(fileName);
+		} else {
+			stopAllProcessing();
 		}
+
 	}
 
 	private void saveFileToExternal(String fileName, Serializable ser) {
@@ -402,31 +436,25 @@ public class FileAndPrefStorage implements DataStorage {
 				context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
 				DIRECTORY_NAME);
 
-		if (dir.mkdirs() || dir.isDirectory()) {
-
+		if (isExternalStorageWritable() && (dir.mkdirs() || dir.isDirectory())) {
+			// write to external
+			File file = new File(dir, fileName);
 			try {
-				File file = new File(dir, fileName);
 				fileOut = new FileOutputStream(file);
 				out = new ObjectOutputStream(fileOut);
 				out.writeObject(ser);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (null != out)
-						out.close();
-				} catch (IOException Ex) {
 
-				}
-				try {
-					if (null != fileOut)
-						fileOut.close();
-				} catch (IOException Ex) {
+				// save blank file to internal
+				saveFileToInternal(fileName, blankList(fileName));
 
-				}
+			} catch (IOException ioEx) {
+				// if there's a problem default to internal storage
+				saveFileToInternal(fileName, ser);
 			}
-		}
 
+		} else {
+			saveFileToInternal(fileName, ser);
+		}
 	}
 
 	private void deleteFileFromInternal(String fileName) {
@@ -443,7 +471,7 @@ public class FileAndPrefStorage implements DataStorage {
 		}
 	}
 
-	private boolean writeExternal() {
+	private boolean writeToSDCardPreference() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		String storagePref = pref.getString(
@@ -451,25 +479,41 @@ public class FileAndPrefStorage implements DataStorage {
 				context.getString(R.string.storage_option_internal));
 
 		return storagePref.equals(context
-				.getString(R.string.storage_option_sd_card))
-				&& isExternalStorageWritable();
+				.getString(R.string.storage_option_sd_card));
 	}
 
 	private boolean isExternalStorageWritable() {
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			return true;
-		}
-		return false;
+		return Environment.MEDIA_MOUNTED.equals(Environment
+				.getExternalStorageState());
 	}
 
 	private boolean isExternalStorageReadable() {
 		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)
-				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			return true;
+		return Environment.MEDIA_MOUNTED.equals(state)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+	}
+
+	/**
+	 * This helper method returns a blank work packet list or results packet
+	 * list. Returns a results packet list if the results list filename is
+	 * passed in. Defaults to a work packet list.
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	private Serializable blankList(String fileName) {
+		// cannot use a switch here due to backwards compatibility issues
+		// needs to work on devices using java 1.7 and below
+		if (fileName.equals(RESULTS_LIST_FILENAME)) {
+			return new ResultsPacketList();
+		} else {
+			return new WorkPacketList();
 		}
-		return false;
+	}
+
+	private void stopAllProcessing() {
+		Intent intent = new Intent(context, StopAllProcessingService.class);
+		context.startService(intent);
 	}
 
 }

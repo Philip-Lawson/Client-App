@@ -5,9 +5,9 @@ package uk.ac.qub.finalproject.client.persistence;
 
 import java.util.List;
 
-import finalproject.poc.calculationclasses.IDataProcessor;
-import finalproject.poc.calculationclasses.ResultsPacketList;
-import finalproject.poc.calculationclasses.WorkPacketList;
+import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
+import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
+import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
 
 /**
  * @author Phil
@@ -18,9 +18,6 @@ public interface DataStorage {
 	public void setupStorage();
 	public void deleteAllData();
 	
-	public void openDatabase();
-	public void closeDatabase();
-
 	public void saveResultsPacketList(ResultsPacketList resultsList);
 	public ResultsPacketList loadResultsPacketList();
 	

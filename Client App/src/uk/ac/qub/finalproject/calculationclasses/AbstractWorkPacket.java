@@ -1,4 +1,6 @@
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
+
+import java.io.Serializable;
 
 /**
  * Abstract implementation of IWorkPacket. To be sent from the server to be
@@ -25,7 +27,7 @@ public abstract class AbstractWorkPacket implements IWorkPacket {
 	/**
 	 * The data to be processed.
 	 */
-	private Object initialData;
+	private Serializable initialData;
 
 	/**
 	 * Default constructor sets the work packet with a default unique ID.
@@ -41,7 +43,7 @@ public abstract class AbstractWorkPacket implements IWorkPacket {
 	 * @param initialData
 	 *            the data to be processed
 	 */
-	public AbstractWorkPacket(Object initialData) {
+	public AbstractWorkPacket(Serializable initialData) {
 		this();
 		this.setInitialData(initialData);
 	}
@@ -54,7 +56,7 @@ public abstract class AbstractWorkPacket implements IWorkPacket {
 	 * @param initialData
 	 *            the data to be processed
 	 */
-	public AbstractWorkPacket(String packetId, Object initialData) {
+	public AbstractWorkPacket(String packetId, Serializable initialData) {
 		this.setPacketId(packetId);
 		this.setInitialData(initialData);
 	}
@@ -70,12 +72,12 @@ public abstract class AbstractWorkPacket implements IWorkPacket {
 	}
 
 	@Override
-	public void setInitialData(Object initialData) {
+	public void setInitialData(Serializable initialData) {
 		this.initialData = initialData;
 	}
 
 	@Override
-	public Object getInitialData() {
+	public Serializable getInitialData() {
 		return initialData;
 	}
 

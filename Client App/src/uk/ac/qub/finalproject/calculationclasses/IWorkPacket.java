@@ -1,4 +1,4 @@
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
 
 import java.io.Serializable;
 
@@ -32,7 +32,7 @@ public interface IWorkPacket extends Serializable {
 	 * 
 	 * @return the data to be processed
 	 */
-	public Object getInitialData();
+	public Serializable getInitialData();
 
 	/**
 	 * Sets the data to be processed.
@@ -40,5 +40,5 @@ public interface IWorkPacket extends Serializable {
 	 * @param initialData
 	 *            the data to be processed
 	 */
-	public void setInitialData(Object initialData);
+	public void setInitialData(Serializable initialData);
 }

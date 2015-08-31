@@ -1,7 +1,7 @@
 /**
  * 
  */
-package finalproject.poc.calculationclasses;
+package uk.ac.qub.finalproject.calculationclasses;
 
 import java.io.Serializable;
 
@@ -35,7 +35,7 @@ public interface IResultsPacket extends Serializable {
 	 * 
 	 * @return the processed data
 	 */
-	public Object getResult();
+	public Serializable getResult();
 
 	/**
 	 * Stores the processed data.
@@ -43,6 +43,6 @@ public interface IResultsPacket extends Serializable {
 	 * @param result
 	 *            the processed data
 	 */
-	public void setResult(Object result);
+	public void setResult(Serializable result);
 	
 }
