@@ -53,7 +53,7 @@ public class DeregisterUserThread extends RunnableClientTemplate {
 	protected void finish(){
 		Message msg = Message.obtain();
 		Bundle b = new Bundle();
-		b.putBoolean(DeleteAccountFragment.DEREGISTRATION_SUCCESS, deregisterSuccess);
+		b.putBoolean(MainPage.DEREGISTRATION_SUCCESS, deregisterSuccess);
 		msg.setData(b);
 		handler.sendMessage(msg);
 	}

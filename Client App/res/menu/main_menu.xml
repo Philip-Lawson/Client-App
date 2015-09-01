@@ -6,7 +6,7 @@
         android:id="@string/account_button_id"
         android:icon="@drawable/ic_action_person"
         android:title="@string/account_button_title"
-        app:showAsAction="ifRoom"/>   
+        app:showAsAction="never"/>   
     <item
         android:id="@string/settings_button_id"
         android:icon="@drawable/ic_action_settings"
