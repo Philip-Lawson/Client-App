@@ -48,14 +48,28 @@ public class FileAndPrefStorage implements DataStorage {
 	private static final String PROCESSOR_CLASS_FILENAME = "processor_class.ser";
 	private static final String DIRECTORY_NAME = "Volunteer Science Data";
 
+	private static volatile FileAndPrefStorage uniqueInstance;
+	
 	private Context context;
 	private ObjectOutputStream out;
 	private FileOutputStream fileOut;
 	private ObjectInputStream in;
 	private FileInputStream fileIn;
 
-	public FileAndPrefStorage(Context context) {
-		this.context = context;
+	private FileAndPrefStorage(Context context) {
+		this.context = context.getApplicationContext();
+	}
+	
+	public static FileAndPrefStorage getInstance(Context context){
+		if (uniqueInstance == null){
+			synchronized (FileAndPrefStorage.class){
+				if (uniqueInstance == null){
+					uniqueInstance = new FileAndPrefStorage(context);
+				}
+			}			
+		}
+		
+		return uniqueInstance;
 	}
 
 	/*
@@ -76,7 +90,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * uk.ac.qub.finalproject.client.persistence.DataStorage#deleteAllData()
 	 */
 	@Override
-	public void deleteAllData() {
+	public synchronized void deleteAllData() {
 		String[] files = { WORK_LIST_FILENAME, RESULTS_LIST_FILENAME,
 				PROCESSOR_CLASS_FILENAME };
 
@@ -102,7 +116,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (uk.ac.qub.finalproject.calculationclasses.ResultsPacketList)
 	 */
 	@Override
-	public void saveResultsPacketList(ResultsPacketList resultsList) {
+	public synchronized void saveResultsPacketList(ResultsPacketList resultsList) {
 		saveFile(RESULTS_LIST_FILENAME, resultsList);
 
 	}
@@ -115,7 +129,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * ()
 	 */
 	@Override
-	public ResultsPacketList loadResultsPacketList() {
+	public synchronized ResultsPacketList loadResultsPacketList() {
 		ResultsPacketList internalList = (ResultsPacketList) blankList(RESULTS_LIST_FILENAME);
 		ResultsPacketList externalList = (ResultsPacketList) blankList(RESULTS_LIST_FILENAME);
 
@@ -168,7 +182,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (uk.ac.qub.finalproject.calculationclasses.WorkPacketList)
 	 */
 	@Override
-	public void saveWorkPacketList(WorkPacketList workPacketList) {
+	public synchronized void saveWorkPacketList(WorkPacketList workPacketList) {
 		saveFile(WORK_LIST_FILENAME, workPacketList);
 	}
 
@@ -180,7 +194,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * ()
 	 */
 	@Override
-	public WorkPacketList loadWorkPacketList() {
+	public synchronized WorkPacketList loadWorkPacketList() {
 		WorkPacketList internalList = (WorkPacketList) blankList(WORK_LIST_FILENAME);
 		WorkPacketList externalList = (WorkPacketList) blankList(WORK_LIST_FILENAME);
 
@@ -233,7 +247,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (uk.ac.qub.finalproject.calculationclasses.IDataProcessor)
 	 */
 	@Override
-	public void saveProcessorClass(IDataProcessor dataProcessor) {
+	public synchronized void saveProcessorClass(IDataProcessor dataProcessor) {
 		// Empty implementation. This will be used if dynamic
 		// class loading is implemented in the future.
 
@@ -247,7 +261,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * ()
 	 */
 	@Override
-	public IDataProcessor loadProcessorClass() {
+	public synchronized IDataProcessor loadProcessorClass() {
 		// Working on the assumption that dynamic class loading may be
 		// implemented in the future. Returning the processor from here means
 		// that the changes needed for loading are kept to this method. The data
@@ -263,7 +277,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (int)
 	 */
 	@Override
-	public void logNetworkRequest(int requestNum) {
+	public synchronized void logNetworkRequest(int requestNum) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		String requests = pref.getString(
@@ -284,7 +298,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * getIncompleteNetworkActions()
 	 */
 	@Override
-	public List<Integer> getIncompleteNetworkActions() {
+	public synchronized List<Integer> getIncompleteNetworkActions() {
 		ArrayList<Integer> requestsList = new ArrayList<Integer>();
 
 		SharedPreferences pref = PreferenceManager
@@ -312,7 +326,7 @@ public class FileAndPrefStorage implements DataStorage {
 	 * (int)
 	 */
 	@Override
-	public void deleteNetworkRequest(int requestNum) {
+	public synchronized void deleteNetworkRequest(int requestNum) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		String requests = pref.getString(
@@ -326,6 +340,14 @@ public class FileAndPrefStorage implements DataStorage {
 							amendedRequests).apply();
 		}
 
+	}
+	
+	@Override
+	public synchronized void transferFiles(){
+		WorkPacketList workPackets = loadWorkPacketList();
+		ResultsPacketList resultsPackets = loadResultsPacketList();
+		saveWorkPacketList(workPackets);
+		saveResultsPacketList(resultsPackets);
 	}
 
 	private Serializable readFileFromInternal(String fileName)
@@ -426,6 +448,12 @@ public class FileAndPrefStorage implements DataStorage {
 
 			deleteFileFromExternal(fileName);
 		} else {
+			try {
+				cleanInternalMemory();
+			} catch (IOException e) {
+				
+			}
+			
 			stopAllProcessing();
 		}
 
@@ -509,6 +537,26 @@ public class FileAndPrefStorage implements DataStorage {
 		} else {
 			return new WorkPacketList();
 		}
+	}
+
+	/**
+	 * Helper method replaces the work and result list with blank lists. This
+	 * method is called when there is not sufficient space to store any more
+	 * data.
+	 * @throws IOException 
+	 */
+	private void cleanInternalMemory() throws IOException {
+		deleteFileFromInternal(WORK_LIST_FILENAME);
+		deleteFileFromInternal(RESULTS_LIST_FILENAME);
+		fileOut = context.openFileOutput(WORK_LIST_FILENAME,
+				Context.MODE_PRIVATE);
+		out = new ObjectOutputStream(fileOut);
+		out.writeObject(new WorkPacketList());
+
+		fileOut = context.openFileOutput(RESULTS_LIST_FILENAME,
+				Context.MODE_PRIVATE);
+		out = new ObjectOutputStream(fileOut);
+		out.writeObject(new ResultsPacketList());
 	}
 
 	private void stopAllProcessing() {

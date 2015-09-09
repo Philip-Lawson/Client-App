@@ -1,6 +1,5 @@
 package uk.ac.qub.finalproject.client.views;
 
-import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
 import uk.ac.qub.finalproject.client.views.R;
@@ -154,14 +153,14 @@ public class MainActivity extends ActionBarActivity {
 				boolean validEmailAddress = EmailValidator
 						.emailIsValid(emailAddress);
 
-				if (anonymousField.isChecked() || validEmailAddress) {					
+				if (anonymousField.isChecked() || validEmailAddress) {
 
 					SharedPreferences pref = PreferenceManager
 							.getDefaultSharedPreferences(getBaseContext());
-					
+
 					RegistrationPack registrationPack = new RegistrationPack();
 					registrationPack.setAndroidID(Secure.getString(
-							getContentResolver(), Secure.ANDROID_ID));					
+							getContentResolver(), Secure.ANDROID_ID));
 					registrationPack.setVersionCode(getAppVersion());
 
 					if (anonymousField.isChecked()) {
@@ -184,7 +183,7 @@ public class MainActivity extends ActionBarActivity {
 										emailAddress).apply();
 
 					}
-					
+
 					startRegistration(registrationPack);
 					showProgress();
 				} else {
@@ -201,7 +200,7 @@ public class MainActivity extends ActionBarActivity {
 	 * Helper method sets up the persistence layer.
 	 */
 	private void setupPersistence() {
-		DataStorage persistenceLayer = new FileAndPrefStorage(this);
+		FileAndPrefStorage persistenceLayer = FileAndPrefStorage.getInstance(this);
 		persistenceLayer.setupStorage();
 	}
 
@@ -231,11 +230,10 @@ public class MainActivity extends ActionBarActivity {
 		registrationMessage.show(fragment, "registration");
 
 	}
-	
-	private void startRegistration(RegistrationPack registrationPack){
+
+	private void startRegistration(RegistrationPack registrationPack) {
 		RunnableClientTemplate registerClient = new RegisterClientThread(
-				getBaseContext(), registrationPack,
-				registrationHandler);
+				getBaseContext(), registrationPack, registrationHandler);
 		Thread registrationThread = new Thread(registerClient);
 		registrationThread.setDaemon(true);
 		registrationThread.start();
@@ -281,8 +279,13 @@ public class MainActivity extends ActionBarActivity {
 		 */
 		finish();
 	}
-	
-	private int getAppVersion(){
+
+	/**
+	 * Helper method to get the current version that this device is using.
+	 * 
+	 * @return
+	 */
+	private int getAppVersion() {
 		try {
 			return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 		} catch (NameNotFoundException e) {

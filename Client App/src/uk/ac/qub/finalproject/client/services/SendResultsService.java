@@ -11,6 +11,10 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
+ * This service pulls the latest list of results packets from the database. If
+ * the list contains results it will start a networking thread that will send
+ * the results to the server.
+ * 
  * @author Phil
  *
  */
@@ -20,8 +24,8 @@ public class SendResultsService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		workDB = new FileAndPrefStorage(getApplicationContext());		
-		ResultsPacketList resultsList = workDB.loadResultsPacketList();		
+		workDB = FileAndPrefStorage.getInstance(getApplicationContext());
+		ResultsPacketList resultsList = workDB.loadResultsPacketList();
 
 		if (resultsList.size() <= 0) {
 			stopSelf();
@@ -42,7 +46,6 @@ public class SendResultsService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

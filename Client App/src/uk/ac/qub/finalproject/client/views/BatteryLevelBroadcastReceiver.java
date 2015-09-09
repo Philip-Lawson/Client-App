@@ -13,6 +13,10 @@ import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 
 /**
+ * This broadcast receiver listens out for changes in the battery status and
+ * starts or stops the data processing service according to the user's
+ * preferences.
+ * 
  * @author Phil
  *
  */
@@ -36,6 +40,14 @@ public class BatteryLevelBroadcastReceiver extends BroadcastReceiver {
 
 	}
 
+	/**
+	 * Helper method returns true if the device is currently permitted to
+	 * process data.
+	 * 
+	 * @param context
+	 * @param intent
+	 * @return
+	 */
 	private boolean canProcessData(Context context, Intent intent) {
 
 		SharedPreferences pref = PreferenceManager
@@ -45,6 +57,17 @@ public class BatteryLevelBroadcastReceiver extends BroadcastReceiver {
 				|| aboveThreshold(intent, pref, context);
 	}
 
+	/**
+	 * Helper method returns true if the battery is charging. Note that if the
+	 * battery is charging and the user doesn't want the device to process data
+	 * when the device is plugged in (regardless of battery level) this will
+	 * return false.
+	 * 
+	 * @param batteryInfo
+	 * @param pref
+	 * @param context
+	 * @return
+	 */
 	private boolean isCharging(Intent batteryInfo, SharedPreferences pref,
 			Context context) {
 		boolean chargingEnabled = pref.getBoolean(
@@ -55,9 +78,17 @@ public class BatteryLevelBroadcastReceiver extends BroadcastReceiver {
 				|| batteryStatus == BatteryManager.BATTERY_PLUGGED_USB;
 
 		return chargingEnabled && charging;
-
 	}
 
+	/**
+	 * Helper method returns true if the battery level is above the user
+	 * specified threshold for processing data.
+	 * 
+	 * @param batteryInfo
+	 * @param pref
+	 * @param context
+	 * @return
+	 */
 	private boolean aboveThreshold(Intent batteryInfo, SharedPreferences pref,
 			Context context) {
 		String chargingPref = pref.getString(

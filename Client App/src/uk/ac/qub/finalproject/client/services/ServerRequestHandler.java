@@ -22,6 +22,10 @@ import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 
 /**
+ * This is the concrete implementation of the abstract request handler class. It
+ * processes server requests to process work packets, become dormant or to load
+ * a new processor class. Note that classloading has not yet been implemented.
+ * 
  * @author Phil
  *
  */
@@ -54,7 +58,7 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 	@Override
 	protected void loadProcessingClass(ObjectInputStream input) {
 
-		DataStorage workDB = new FileAndPrefStorage(context);
+		DataStorage workDB = FileAndPrefStorage.getInstance(context);
 		workDB.logNetworkRequest(ClientRequest.REQUEST_PROCESSING_CLASS);
 
 		try {
@@ -68,14 +72,11 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 			Intent i = new Intent(context, RequestWorkPacketsService.class);
 			context.startService(i);
 		} catch (OptionalDataException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 	}
 
@@ -89,7 +90,7 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 	protected void processWorkPackets(ObjectInputStream input) {
 		try {
 			WorkPacketList workPacketList = (WorkPacketList) input.readObject();
-			DataStorage workDB = new FileAndPrefStorage(context);
+			DataStorage workDB = FileAndPrefStorage.getInstance(context);
 
 			workDB.saveWorkPacketList(workPacketList);
 			workDB.saveResultsPacketList(new ResultsPacketList());

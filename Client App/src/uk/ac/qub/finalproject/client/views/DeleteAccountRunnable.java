@@ -3,7 +3,6 @@
  */
 package uk.ac.qub.finalproject.client.views;
 
-import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import uk.ac.qub.finalproject.client.services.BatteryMonitorService;
 import uk.ac.qub.finalproject.client.services.DataProcessingService;
@@ -20,6 +19,10 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 
 /**
+ * This runnable deletes all of the user's data, stops all services and
+ * unregisters the network receiver. This runnable should only be started when
+ * the user's account has been deleted on the server.
+ * 
  * @author Phil
  *
  */
@@ -27,16 +30,16 @@ public class DeleteAccountRunnable implements Runnable {
 
 	private Context context;
 	private Handler handler;
-	
-	public DeleteAccountRunnable(Context context, Handler handler){
+
+	public DeleteAccountRunnable(Context context, Handler handler) {
 		this.context = context;
 		this.handler = handler;
 	}
-	
+
 	private void deletePreferences(Context context) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		pref.edit().clear().commit();		
+		pref.edit().clear().commit();
 	}
 
 	private void unregisterReceivers(Context context) {
@@ -60,10 +63,10 @@ public class DeleteAccountRunnable implements Runnable {
 	}
 
 	private void deleteData(Context context) {
-		DataStorage persistence = new FileAndPrefStorage(context);
+		FileAndPrefStorage persistence = FileAndPrefStorage.getInstance(context);
 		persistence.deleteAllData();
 	}
-	
+
 	@Override
 	public void run() {
 		deletePreferences(context);

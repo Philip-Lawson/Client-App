@@ -39,18 +39,19 @@ import android.widget.Toast;
  * @author Phil
  *
  */
-public class MyAccountFragment extends Fragment {
+public class HomePageFragment extends Fragment {
 
 	private TextView numPacketsProcessedText;
 	private Button startStopProcessing;
 	private TextView emailText;
 	private CheckedTextView anonymousCheckedTextView;
 	private Button changeEmailButton;
+	private SharedPreferences.OnSharedPreferenceChangeListener prefListener;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.my_account_fragment, container,
+		View view = inflater.inflate(R.layout.home_page_fragment, container,
 				false);
 		setupPacketsProcessedTextView(view);
 		setupProcessingButton(view);
@@ -60,6 +61,14 @@ public class MyAccountFragment extends Fragment {
 		return view;
 	}
 
+	@Override
+	public void onDestroy() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		pref.unregisterOnSharedPreferenceChangeListener(prefListener);
+		super.onDestroy();
+	}
+
 	/**
 	 * Helper method that sets up the text view. It dynamically writes the
 	 * number of packets processed from a field in shared preferences.
@@ -67,18 +76,42 @@ public class MyAccountFragment extends Fragment {
 	 * @param view
 	 */
 	private void setupPacketsProcessedTextView(View view) {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+
 		numPacketsProcessedText = (TextView) view
-				.findViewById(R.string.my_account_num_packets_processed_id);
-		int packetsProcessed = PreferenceManager.getDefaultSharedPreferences(
-				getActivity()).getInt(
+				.findViewById(R.string.home_page_num_packets_processed_id);
+		int packetsProcessed = pref.getInt(
 				getString(R.string.packets_completed_key), 0);
-		String text = getString(R.string.my_account_num_packets_processed_text_part1)
+		String text = getString(R.string.home_page_num_packets_processed_text_part1)
 				+ " "
 				+ packetsProcessed
 				+ " "
-				+ getString(R.string.my_account_num_packets_processed_text_part2);
+				+ getString(R.string.home_page_num_packets_processed_text_part2);
 
 		numPacketsProcessedText.setText(text);
+
+		// adds a change listener to shared preferences
+		// this listens for changes to the number of packets
+		// processed and changes the text field when the number changes
+		prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+			@Override
+			public void onSharedPreferenceChanged(
+					SharedPreferences sharedPreferences, String key) {
+				if (key.equals(getString(R.string.packets_completed_key))) {
+					String packetsProcessed = sharedPreferences.getInt(
+							getString(R.string.packets_completed_key), 0)
+							+ " "
+							+ getString(R.string.home_page_num_packets_processed_text_part2);
+
+					numPacketsProcessedText.setText(packetsProcessed);
+				}
+
+			}
+		};
+
+		pref.registerOnSharedPreferenceChangeListener(prefListener);
 	}
 
 	/**
@@ -95,13 +128,12 @@ public class MyAccountFragment extends Fragment {
 				false);
 
 		emailText = (TextView) view
-				.findViewById(R.string.my_account_email_text_id);
+				.findViewById(R.string.home_page_email_text_id);
 		anonymousCheckedTextView = (CheckedTextView) view
-				.findViewById(R.string.my_account_anonymous_user_checked_text_view_id);
+				.findViewById(R.string.home_page_anonymous_user_checked_text_view_id);
 
 		if (email.equals("")) {
-			emailText
-					.setText(getString(R.string.my_account_email_default_text));
+			emailText.setText(getString(R.string.home_page_email_default_text));
 		} else {
 			emailText.setText(email);
 		}
@@ -112,7 +144,7 @@ public class MyAccountFragment extends Fragment {
 
 	private void setupChangeEmailButton(View view) {
 		changeEmailButton = (Button) view
-				.findViewById(R.string.my_account_change_email_button_id);
+				.findViewById(R.string.home_page_change_email_button_id);
 		changeEmailButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -125,18 +157,18 @@ public class MyAccountFragment extends Fragment {
 
 	private void setupProcessingButton(View view) {
 		startStopProcessing = (Button) view
-				.findViewById(R.string.my_account_processing_button_id);
+				.findViewById(R.string.home_page_processing_button_id);
 		if (isMyServiceRunning(DataProcessingService.class)) {
 			startStopProcessing
-					.setText(getString(R.string.my_account_processing_button_stop_processing_text));
+					.setText(getString(R.string.home_page_processing_button_stop_processing_text));
 		}
 
 		startStopProcessing.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				String stopProcessing = getString(R.string.my_account_processing_button_stop_processing_text);
-				String startupText = getString(R.string.my_account_processing_button_startup_text);
+				String stopProcessing = getString(R.string.home_page_processing_button_stop_processing_text);
+				String startupText = getString(R.string.home_page_processing_button_startup_text);
 
 				if (startStopProcessing.getText().equals(startupText)) {
 					Intent loadProcessingClass = new Intent(getActivity(),
@@ -149,7 +181,7 @@ public class MyAccountFragment extends Fragment {
 					getActivity().startService(startBatteryMonitor);
 
 					startStopProcessing
-							.setText(getString(R.string.my_account_processing_button_stop_processing_text));
+							.setText(getString(R.string.home_page_processing_button_stop_processing_text));
 
 				} else if (startStopProcessing.getText().equals(stopProcessing)) {
 					Toast.makeText(getActivity(), "Processing Stopped",
@@ -164,7 +196,7 @@ public class MyAccountFragment extends Fragment {
 					getActivity().stopService(stopProcessingService);
 
 					startStopProcessing
-							.setText(getString(R.string.my_account_processing_button_start_processing_text));
+							.setText(getString(R.string.home_page_processing_button_start_processing_text));
 				} else {
 					Toast.makeText(getActivity(), "Processing Started",
 							Toast.LENGTH_SHORT).show();
@@ -176,7 +208,7 @@ public class MyAccountFragment extends Fragment {
 					getActivity().startService(startBatteryMonitor);
 
 					startStopProcessing
-							.setText(getString(R.string.my_account_processing_button_stop_processing_text));
+							.setText(getString(R.string.home_page_processing_button_stop_processing_text));
 				}
 
 			}
@@ -211,7 +243,7 @@ public class MyAccountFragment extends Fragment {
 
 		if (email.equals("")) {
 			changeEmailText
-					.setText(getString(R.string.my_account_email_default_text));
+					.setText(getString(R.string.home_page_email_default_text));
 		} else {
 			changeEmailText.setText(email);
 		}

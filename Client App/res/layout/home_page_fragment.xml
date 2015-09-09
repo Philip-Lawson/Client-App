@@ -8,60 +8,60 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <TextView
-        android:id="@string/my_account_packets_processed_title_id"
+        android:id="@string/home_page_packets_processed_title_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
-        android:text="@string/my_account_packets_processed_title_text"
+        android:text="@string/home_page_packets_processed_title_text"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@string/my_account_num_packets_processed_id"
+        android:id="@string/home_page_num_packets_processed_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@string/my_account_packets_processed_title_id"
+        android:layout_below="@string/home_page_packets_processed_title_id"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="25dp" />
 
     <Button
-        android:id="@string/my_account_processing_button_id"
+        android:id="@string/home_page_processing_button_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@string/my_account_num_packets_processed_id"
+        android:layout_below="@string/home_page_num_packets_processed_id"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:clickable="true"
-        android:text="@string/my_account_processing_button_startup_text" />
+        android:text="@string/home_page_processing_button_startup_text" />
     
      <TextView
-        android:id="@string/my_account_email_title_id"
+        android:id="@string/home_page_email_title_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@string/my_account_processing_button_id"
+        android:layout_below="@string/home_page_processing_button_id"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
-        android:text="@string/my_account_email_title_text"
+        android:text="@string/home_page_email_title_text"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@string/my_account_email_text_id"
+        android:id="@string/home_page_email_text_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@string/my_account_email_title_id"
+        android:layout_below="@string/home_page_email_title_id"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="10dp"
-        android:text="@string/my_account_email_default_text" />
+        android:text="@string/home_page_email_default_text" />
     <CheckedTextView 
-        android:id="@string/my_account_anonymous_user_checked_text_view_id"
+        android:id="@string/home_page_anonymous_user_checked_text_view_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@string/my_account_email_text_id"
+        android:layout_below="@string/home_page_email_text_id"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:checked="false"
         android:gravity="fill_vertical"
@@ -69,17 +69,17 @@
         android:layout_marginStart="25dp"       
         android:clickable="false"    
         android:textColor="@color/abc_secondary_text_material_light"
-        android:text="@string/my_account_anonymous_user_checked_text_view_text"/>
+        android:text="@string/home_page_anonymous_user_checked_text_view_text"/>
 
     <Button
-        android:id="@string/my_account_change_email_button_id"
+        android:id="@string/home_page_change_email_button_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@string/my_account_anonymous_user_checked_text_view_id"        
+        android:layout_below="@string/home_page_anonymous_user_checked_text_view_id"        
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"       
-        android:text="@string/my_account_change_email_button_text" />
+        android:text="@string/home_page_change_email_button_text" />
 
 </RelativeLayout>

@@ -12,14 +12,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import uk.ac.qub.finalproject.client.implementations.Implementations;
 import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * This fragment creates the about page view within the main page. It creates
+ * the on click listener that directs the user to the project website when they
+ * click the donate button.
+ * 
  * @author Phil
  *
  */
 public class AboutFragment extends Fragment {
-	
+
 	private Button donateButton;
 
 	@Override
@@ -27,18 +32,27 @@ public class AboutFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.about_page_fragment, container,
 				false);
-		donateButton = (Button) view.findViewById(R.string.about_page_donate_button_id);
-		donateButton.setOnClickListener(new OnClickListener(){
+		donateButton = (Button) view
+				.findViewById(R.string.about_page_donate_button_id);
 
-			@Override
-			public void onClick(View v) {
-				Uri donateURL = Uri.parse("http://oxfam.org.uk"); 
-				Intent donateIntent = new Intent(Intent.ACTION_VIEW, donateURL);
-				startActivity(donateIntent);				
-			}
+		if (Implementations.donateButtonEnabled()) {
+			donateButton.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Uri donateURL = Uri.parse(Implementations
+							.getProjectWebsite());
+					Intent donateIntent = new Intent(Intent.ACTION_VIEW,
+							donateURL);
+					startActivity(donateIntent);
+				}
+
+			});
 			
-		});
-		
+		} else {
+			donateButton.setVisibility(View.GONE);
+		}
+
 		return view;
 	}
 }

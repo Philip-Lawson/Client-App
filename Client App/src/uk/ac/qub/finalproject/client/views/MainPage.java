@@ -62,9 +62,9 @@ public class MainPage extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setTitle(R.string.account_button_title);
+		getSupportActionBar().setTitle(R.string.home_page_button_title);
 		getFragmentManager().beginTransaction()
-				.replace(android.R.id.content, new MyAccountFragment())
+				.replace(android.R.id.content, new HomePageFragment())
 				.commit();
 	}
 
@@ -94,10 +94,10 @@ public class MainPage extends ActionBarActivity {
 					.replace(android.R.id.content, new AboutFragment())
 					.commit();
 			break;
-		case R.string.account_button_id:
-			getSupportActionBar().setTitle(R.string.account_button_title);
+		case R.string.home_page_button_id:
+			getSupportActionBar().setTitle(R.string.home_page_button_title);
 			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new MyAccountFragment())
+					.replace(android.R.id.content, new HomePageFragment())
 					.commit();
 			break;
 		case R.string.delete_account_menu_button_id:

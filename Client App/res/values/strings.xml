@@ -21,6 +21,7 @@
     <string name="registration_successful_text">Registration Complete</string>
     <string name="registration_unsuccessful_title">Registration Unsuccessful</string>
     <string name="registration_unsuccessful_text">Please try again later</string>
+    <string name="register_page_image_description">Scientific logos</string>
 
     <!-- Strings for network unavailable -->
     <string name="network_unavailable_title">Network Unavailable</string>
@@ -73,8 +74,8 @@
     <!-- Strings for main page -->
     <string name="main_page_id"></string>
     <!-- Strings for the menu action bar -->
-    <string name="account_button_id">Account Button</string>
-    <string name="account_button_title">My Account</string>
+    <string name="home_page_button_id">Home Button</string>
+    <string name="home_page_button_title">Home</string>
     <string name="settings_button_id">Settings Button</string>
     <string name="settings_button_title">Settings</string>
     <string name="about_button_id">About Button</string>
@@ -88,25 +89,25 @@
     <string name="about_page_donate_button_id">Donate Button ID</string>
     <string name="about_page_donate_button_text">Donate</string>
 
-    <!-- Strings for My Account page -->
-    <string name="my_account_packets_processed_title_id">Packets Processed Title</string>
-    <string name="my_account_packets_processed_title_text">Work Complete</string>
-    <string name="my_account_num_packets_processed_id">Number of packets processed</string>
-    <string name="my_account_num_packets_processed_text_part1">This device has processed </string>
-    <string name="my_account_num_packets_processed_text_part2"> calculations</string>
-    <string name="my_account_processing_button_id"></string>
-    <string name="my_account_processing_button_startup_text">Begin Processing</string>
-    <string name="my_account_processing_button_stop_processing_text">Stop Processing</string>
-    <string name="my_account_processing_button_start_processing_text">Start Processing</string>
-    <string name="my_account_email_title_id">Email Title ID</string>
-    <string name="my_account_email_title_text">Email</string>
-    <string name="my_account_email_text_id">Change Email Text</string>
-    <string name="my_account_email_default_text">No Email Saved</string>
-    <string name="my_account_anonymous_user_checked_text_view_id">Anon CheckedTextView</string>
-    <string name="my_account_anonymous_user_checked_text_view_text">Anonymous User</string>
-    <string name="my_account_change_email_button_id">Change Email Button ID</string>
-    <string name="my_account_change_email_button_text">Change Email</string>
-    <string name="my_account_remain_anonymous_checked_text_id">Checked text view ID</string>
+    <!-- Strings for Home page -->
+    <string name="home_page_packets_processed_title_id">Packets Processed Title</string>
+    <string name="home_page_packets_processed_title_text">Work Complete</string>
+    <string name="home_page_num_packets_processed_id">Number of packets processed</string>
+    <string name="home_page_num_packets_processed_text_part1"></string>
+    <string name="home_page_num_packets_processed_text_part2"> contributions</string>
+    <string name="home_page_processing_button_id"></string>
+    <string name="home_page_processing_button_startup_text">Begin Processing</string>
+    <string name="home_page_processing_button_stop_processing_text">Stop Processing</string>
+    <string name="home_page_processing_button_start_processing_text">Start Processing</string>
+    <string name="home_page_email_title_id">Email Title ID</string>
+    <string name="home_page_email_title_text">Email</string>
+    <string name="home_page_email_text_id">Change Email Text</string>
+    <string name="home_page_email_default_text">No Email Saved</string>
+    <string name="home_page_anonymous_user_checked_text_view_id">Anon CheckedTextView</string>
+    <string name="home_page_anonymous_user_checked_text_view_text">Anonymous User</string>
+    <string name="home_page_change_email_button_id">Change Email Button ID</string>
+    <string name="home_page_change_email_button_text">Change Email</string>
+    <string name="home_page_remain_anonymous_checked_text_id">Checked text view ID</string>
 
     <!-- Strings for the change email dialog -->
     <string name="change_email_edit_text_id">Change Email EditText</string>

@@ -3,13 +3,6 @@
  */
 package uk.ac.qub.finalproject.client.services;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import uk.ac.qub.finalproject.calculationclasses.CalculationPacket;
 import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
 import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
@@ -103,7 +96,7 @@ public class DataProcessingRunnable implements Runnable {
 
 		boolean workProcessed = false;
 
-		workStorage = new FileAndPrefStorage(
+		workStorage = FileAndPrefStorage.getInstance(
 				dataProcessingService.getApplicationContext());
 
 		WorkPacketList workPackets = workStorage.loadWorkPacketList();
@@ -114,29 +107,19 @@ public class DataProcessingRunnable implements Runnable {
 		if (null == processor || workPackets.size() < 1) {
 			try {
 				dataProcessingService.stopSelf();
-			} catch (NullPointerException NPEx){
+			} catch (NullPointerException NPEx) {
 				// the service has been killed by the android OS
-			}			
+			}
 		} else {
-
-			// set up the thread pool, callable and calculation objects
+			
 			isProcessing = true;
-			ExecutorService executor = Executors
-					.newSingleThreadScheduledExecutor();
-			DataProcessorCallable dataProcessor = new DataProcessorCallable();
-			dataProcessor.setDataProcessor(processor);
-			Callable<CalculationPacket> processorThread;
-			CalculationPacket calculationPacket = new CalculationPacket();
-
+			
 			while (workPackets.size() > 0 && canContinue) {
 				// set work and result packets
 				workPackets = workStorage.loadWorkPacketList();
 				resultPackets = workStorage.loadResultsPacketList();
 				resultPackets.setTimeStamp(workPackets.getTimeStamp());
-
-				calculationPacket.setWorkPacketList(workPackets);
-				calculationPacket.setResultsPacketList(resultPackets);
-
+				
 				// notify the user of current progress
 				// if the process has been stopped we don't want to show a
 				// progress bar to the user.
@@ -144,36 +127,18 @@ public class DataProcessingRunnable implements Runnable {
 					dataProcessingService.updateProgress(resultPackets.size(),
 							workPackets.size());
 				}
+				
+				resultPackets.add(processor.execute(workPackets.remove(0)));
 
-				// prepare the callable
-				dataProcessor.setPacket(calculationPacket);
-				processorThread = dataProcessor;
-				Future<CalculationPacket> future = executor
-						.submit(processorThread);
+				workStorage.saveResultsPacketList(resultPackets);
+				workStorage.saveWorkPacketList(workPackets);
 
-				// start processing and save the result when done
-				try {
-					calculationPacket = future.get();
-					resultPackets = calculationPacket.getResultsPacketList();
-					workPackets = calculationPacket.getWorkPacketList();
-
-					workStorage.saveResultsPacketList(resultPackets);
-					workStorage.saveWorkPacketList(workPackets);
-
-					workProcessed = true;
-					updatePacketsProcessed();
-
-				} catch (InterruptedException e) {
-					// TODO log exception?
-				} catch (ExecutionException e) {
-					// TODO log exception?
-				}
-
+				workProcessed = true;
+				updatePacketsProcessed();
 			}
 
 			// if processing is complete the processor will ask the service to
-			// start
-			// the send results service
+			// start the send results service
 			if (workProcessed && workPackets.size() == 0) {
 				isProcessing = false;
 
@@ -200,8 +165,7 @@ public class DataProcessingRunnable implements Runnable {
 	private void updatePacketsProcessed() {
 		try {
 			// this call can cause a null pointer if the service has been
-			// stopped and
-			// the runnable is still processing
+			// stopped and the runnable is still processing
 			Context context = dataProcessingService.getApplicationContext();
 
 			SharedPreferences pref = PreferenceManager

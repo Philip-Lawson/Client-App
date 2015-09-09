@@ -11,11 +11,25 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 
 /**
+ * This service monitors the battery status of the device using a battery level
+ * broadcast receiver. This service was written as a simple way to circumvent
+ * the restrictions on broadcast receivers that listen to changes in the
+ * battery. <br>
+ * </br> It provides an easy way to register and unregister the battery
+ * broadcasting service without needing any knowledge of the broadcast
+ * receiver's implementation. As all active background services appear in the
+ * app status in the Android application settings, this gives the user an easy
+ * way to tell if the app is currently monitoring the battery status.
+ * 
  * @author Phil
  *
  */
 public class BatteryMonitorService extends Service {
 
+	/**
+	 * THe broadcast receiver that is used to monitor and respond to changes in
+	 * the battery status.
+	 */
 	private static final BroadcastReceiver batteryReceiver = new BatteryLevelBroadcastReceiver();
 
 	@Override
@@ -42,7 +56,6 @@ public class BatteryMonitorService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

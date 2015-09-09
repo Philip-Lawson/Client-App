@@ -13,10 +13,25 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
+import uk.ac.qub.finalproject.client.views.R;
 import android.app.Service;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 
+/**
+ * This abstract class uses the template method pattern to allow subclasses to
+ * implement their own behaviours as appropriate while implementing the common
+ * methods needed to connect to the server. It also allows for a consistent
+ * behaviour among all subclasses. <br>
+ * </br> Note that only the method to communicate with the server must be
+ * implemented.
+ * 
+ * @author Phil
+ *
+ */
 public abstract class RunnableClientTemplate implements Runnable {
 
 	private static final int PORT_NUMBER = 12346;
@@ -42,12 +57,35 @@ public abstract class RunnableClientTemplate implements Runnable {
 		this.service = service;
 	}
 
+	/**
+	 * Checks to see if the network is available prior to attempting to
+	 * communicate with the server. Note that this method is replicated in the
+	 * network info broadcast receiver.
+	 * 
+	 * @return
+	 */
 	private boolean networkAvailable() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		return connectivityManager.getActiveNetworkInfo().isConnected();
+		int networkInfo = connectivityManager.getActiveNetworkInfo().getType();
+
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		String networkKey = context.getString(R.string.wifi_key);
+		String wifiOnly = context.getString(R.string.network_description_wifi);
+
+		if (pref.getString(networkKey, wifiOnly).equals(wifiOnly)) {
+			return networkInfo == ConnectivityManager.TYPE_WIFI;
+		} else {
+			return networkInfo == ConnectivityManager.TYPE_WIFI
+					|| networkInfo == ConnectivityManager.TYPE_MOBILE;
+		}
 	}
 
+	/**
+	 * Set up necessary objects and conditions before communicating with the
+	 * server.
+	 */
 	protected void setup() {
 
 	}
@@ -69,23 +107,41 @@ public abstract class RunnableClientTemplate implements Runnable {
 		output.flush();
 	}
 
+	/**
+	 * Send a request type to the server along with the appropriate
+	 * information/data.
+	 * 
+	 * @throws IOException
+	 */
 	protected abstract void communicateWithServer() throws IOException;
 
+	/**
+	 * Process information from the server.
+	 * 
+	 * @throws IOException
+	 */
 	protected void processConnection() throws IOException {
 
 	}
 
+	/**
+	 * Clean up after all networking actions are completed.
+	 */
 	protected void finish() {
 
 	}
-	
-	protected void informUserConnectionUnsuccessful(){
-		
+
+	/**
+	 * Initiate an action to inform the user that the connection was
+	 * unsuccessful. This could be due to a network being unavailable, or the
+	 * user's preferences not permitting a data connection.
+	 */
+	protected void informUserConnectionUnsuccessful() {
+
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		try {
 			setup();
 
@@ -99,11 +155,9 @@ public abstract class RunnableClientTemplate implements Runnable {
 				informUserConnectionUnsuccessful();
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		} finally {
 			try {
 				if (output != null)

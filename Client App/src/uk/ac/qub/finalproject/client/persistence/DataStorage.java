@@ -31,5 +31,7 @@ public interface DataStorage {
 	public List<Integer> getIncompleteNetworkActions();
 	public void deleteNetworkRequest(int requestNum);
 	
+	public void transferFiles();
+	
 	
 }

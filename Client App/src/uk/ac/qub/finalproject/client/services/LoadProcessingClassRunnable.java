@@ -22,7 +22,7 @@ public class LoadProcessingClassRunnable extends RunnableClientTemplate {
 	
 	@Override
 	protected void setup(){
-		workDB = new FileAndPrefStorage(context);
+		workDB = FileAndPrefStorage.getInstance(context);
 		requestHandler = new ServerRequestHandler(context);		
 		workDB.logNetworkRequest(ClientRequest.REQUEST_PROCESSING_CLASS);		
 	}

@@ -12,6 +12,10 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
+ * The network service checks for any incomplete network tasks and starts all
+ * remaining tasks. This service should only be started when a network is
+ * available.
+ * 
  * @author Phil
  *
  */
@@ -19,7 +23,7 @@ public class NetworkService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		DataStorage workDB = new FileAndPrefStorage(this);
+		DataStorage workDB = FileAndPrefStorage.getInstance(this);
 		List<Integer> incompleteTasks = workDB.getIncompleteNetworkActions();
 		for (Integer task : incompleteTasks) {
 			processTask(task);
@@ -29,7 +33,7 @@ public class NetworkService extends Service {
 	}
 
 	@Override
-	public IBinder onBind(Intent intent) {		
+	public IBinder onBind(Intent intent) {
 		return null;
 	}
 

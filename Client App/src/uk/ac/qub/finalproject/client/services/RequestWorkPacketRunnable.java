@@ -11,12 +11,20 @@ import android.content.Context;
 import android.provider.Settings.Secure;
 
 /**
+ * This networking runnable requests another work packet list from the server.
+ * Note that when it receives the work packet it does not start processing. It
+ * is the responsibility of the battery monitor service to start processing when
+ * it is appropriate.
+ * 
  * @author Phil
  *
  */
 public class RequestWorkPacketRunnable extends RunnableClientTemplate {
 
-	
+	/**
+	 * This handles the response from the server. This is needed as the server
+	 * could respond in various different ways.
+	 */
 	private AbstractRequestHandler requestHandler;
 
 	public RequestWorkPacketRunnable(Context context, Service service) {
@@ -25,15 +33,16 @@ public class RequestWorkPacketRunnable extends RunnableClientTemplate {
 
 	@Override
 	public void setup() {
-		workDB = new FileAndPrefStorage(context);
+		workDB = FileAndPrefStorage.getInstance(context);
 		requestHandler = new ServerRequestHandler(context);
 		workDB.logNetworkRequest(ClientRequest.REQUEST_WORK_PACKET);
 	}
 
 	@Override
 	protected void communicateWithServer() throws IOException {
-		String deviceID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-		
+		String deviceID = Secure.getString(context.getContentResolver(),
+				Secure.ANDROID_ID);
+
 		output.reset();
 		output.writeInt(ClientRequest.REQUEST_WORK_PACKET);
 		output.writeObject(deviceID);
@@ -46,8 +55,8 @@ public class RequestWorkPacketRunnable extends RunnableClientTemplate {
 	}
 
 	@Override
-	public void finish() {		
-		workDB.deleteNetworkRequest(ClientRequest.REQUEST_WORK_PACKET);	
+	public void finish() {
+		workDB.deleteNetworkRequest(ClientRequest.REQUEST_WORK_PACKET);
 		service.stopSelf();
 	}
 
