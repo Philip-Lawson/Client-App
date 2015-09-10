@@ -49,7 +49,7 @@ public class FileAndPrefStorage implements DataStorage {
 	private static final String DIRECTORY_NAME = "Volunteer Science Data";
 
 	private static volatile FileAndPrefStorage uniqueInstance;
-	
+
 	private Context context;
 	private ObjectOutputStream out;
 	private FileOutputStream fileOut;
@@ -59,16 +59,24 @@ public class FileAndPrefStorage implements DataStorage {
 	private FileAndPrefStorage(Context context) {
 		this.context = context.getApplicationContext();
 	}
-	
-	public static FileAndPrefStorage getInstance(Context context){
-		if (uniqueInstance == null){
-			synchronized (FileAndPrefStorage.class){
-				if (uniqueInstance == null){
+
+	/**
+	 * Returns an instance of the FileAndPrefStorage class. This implements a
+	 * double checked locking Singleton, and all public methods are thread-safe.
+	 * 
+	 * @param context
+	 *            the application context
+	 * @return
+	 */
+	public static FileAndPrefStorage getInstance(Context context) {
+		if (uniqueInstance == null) {
+			synchronized (FileAndPrefStorage.class) {
+				if (uniqueInstance == null) {
 					uniqueInstance = new FileAndPrefStorage(context);
 				}
-			}			
+			}
 		}
-		
+
 		return uniqueInstance;
 	}
 
@@ -341,15 +349,24 @@ public class FileAndPrefStorage implements DataStorage {
 		}
 
 	}
-	
+
 	@Override
-	public synchronized void transferFiles(){
+	public synchronized void transferFiles() {
 		WorkPacketList workPackets = loadWorkPacketList();
 		ResultsPacketList resultsPackets = loadResultsPacketList();
 		saveWorkPacketList(workPackets);
 		saveResultsPacketList(resultsPackets);
 	}
 
+	/**
+	 * Reads an object from internal storage based on the filename given.
+	 * 
+	 * @param fileName
+	 * @return
+	 * @throws OptionalDataException
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private Serializable readFileFromInternal(String fileName)
 			throws OptionalDataException, ClassNotFoundException, IOException {
 		try {
@@ -378,6 +395,16 @@ public class FileAndPrefStorage implements DataStorage {
 		}
 	}
 
+	/**
+	 * Reads an object from external memory, generally speaking this will be
+	 * from the SD card.
+	 * 
+	 * @param fileName
+	 * @return
+	 * @throws StreamCorruptedException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private Serializable readFileFromExternal(String fileName)
 			throws StreamCorruptedException, IOException,
 			ClassNotFoundException {
@@ -421,6 +448,12 @@ public class FileAndPrefStorage implements DataStorage {
 
 	}
 
+	/**
+	 * Saves the object to file based on the user's storage preferences.
+	 * 
+	 * @param fileName
+	 * @param ser
+	 */
 	private void saveFile(String fileName, Serializable ser) {
 		if (writeToSDCardPreference()) {
 			saveFileToExternal(fileName, ser);
@@ -430,6 +463,13 @@ public class FileAndPrefStorage implements DataStorage {
 
 	}
 
+	/**
+	 * Saves a file to internal memory. If the file is written successfully to
+	 * internal memory it will delete the file from external memory.
+	 * 
+	 * @param fileName
+	 * @param ser
+	 */
 	private void saveFileToInternal(String fileName, Serializable ser) {
 		long totalSpace = context.getFilesDir().getTotalSpace();
 		long usableSpace = context.getFilesDir().getUsableSpace();
@@ -451,14 +491,23 @@ public class FileAndPrefStorage implements DataStorage {
 			try {
 				cleanInternalMemory();
 			} catch (IOException e) {
-				
+
 			}
-			
+
 			stopAllProcessing();
 		}
 
 	}
 
+	/**
+	 * Saves the file to external memory. If it is not possible to save the file
+	 * to external memory it will default to internal memory. If the file is
+	 * successfully saved to external memory a blank version of the object will
+	 * be stored in internal memory.
+	 * 
+	 * @param fileName
+	 * @param ser
+	 */
 	private void saveFileToExternal(String fileName, Serializable ser) {
 		File dir = new File(
 				context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
@@ -485,10 +534,20 @@ public class FileAndPrefStorage implements DataStorage {
 		}
 	}
 
+	/**
+	 * Deletes the file from internal memory. No side effects.
+	 * 
+	 * @param fileName
+	 */
 	private void deleteFileFromInternal(String fileName) {
 		context.deleteFile(fileName);
 	}
 
+	/**
+	 * Deletes the file from external memory. No side effects.
+	 * 
+	 * @param fileName
+	 */
 	private void deleteFileFromExternal(String fileName) {
 		if (isExternalStorageWritable()) {
 			File dir = new File(
@@ -499,6 +558,11 @@ public class FileAndPrefStorage implements DataStorage {
 		}
 	}
 
+	/**
+	 * Returns true if the user preference is to write to the SD card.
+	 * 
+	 * @return
+	 */
 	private boolean writeToSDCardPreference() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -510,11 +574,21 @@ public class FileAndPrefStorage implements DataStorage {
 				.getString(R.string.storage_option_sd_card));
 	}
 
+	/**
+	 * Returns true if it is possible to write to external storage.
+	 * 
+	 * @return
+	 */
 	private boolean isExternalStorageWritable() {
 		return Environment.MEDIA_MOUNTED.equals(Environment
 				.getExternalStorageState());
 	}
 
+	/**
+	 * Returns true if it is possible to read files from external storage.
+	 * 
+	 * @return
+	 */
 	private boolean isExternalStorageReadable() {
 		String state = Environment.getExternalStorageState();
 		return Environment.MEDIA_MOUNTED.equals(state)
@@ -543,7 +617,8 @@ public class FileAndPrefStorage implements DataStorage {
 	 * Helper method replaces the work and result list with blank lists. This
 	 * method is called when there is not sufficient space to store any more
 	 * data.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	private void cleanInternalMemory() throws IOException {
 		deleteFileFromInternal(WORK_LIST_FILENAME);
@@ -559,6 +634,10 @@ public class FileAndPrefStorage implements DataStorage {
 		out.writeObject(new ResultsPacketList());
 	}
 
+	/**
+	 * Helper method, starts a service that will pause all processing. This
+	 * should be called when there isn't enough space to store packet lists.
+	 */
 	private void stopAllProcessing() {
 		Intent intent = new Intent(context, StopAllProcessingService.class);
 		context.startService(intent);

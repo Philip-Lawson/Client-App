@@ -11,6 +11,10 @@ import android.preference.PreferenceManager;
 import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * This is the activity that is first initiated when the app is started. It is
+ * used to ensure that a registered user is directed to the Home page and a
+ * non-registered user is directed to the Register page.
+ * 
  * @author Phil
  *
  */
@@ -28,7 +32,7 @@ public class SplashActivity extends Activity {
 			startActivity(intent);
 		} else {
 			// move to the register page
-			Intent intent = new Intent(this, MainActivity.class);
+			Intent intent = new Intent(this, RegisterPage.class);
 			startActivity(intent);
 		}
 

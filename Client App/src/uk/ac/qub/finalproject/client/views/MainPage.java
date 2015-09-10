@@ -20,6 +20,9 @@ import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
 import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * This is the main page of the app. It acts as a hub to show the various page
+ * fragments that make up the UI.
+ * 
  * @author Phil
  *
  */
@@ -45,6 +48,9 @@ public class MainPage extends ActionBarActivity {
 
 	};
 
+	/**
+	 * The handler used to receive communication from the DeleteAccountRunnable.
+	 */
 	private final Handler dataDeletionHandler = new Handler(
 			Looper.getMainLooper()) {
 		@Override
@@ -53,7 +59,7 @@ public class MainPage extends ActionBarActivity {
 			if (dataDeletionProgress.isShowing()) {
 				dataDeletionProgress.dismiss();
 			}
-			
+
 			showDeleteSuccessfulDialog();
 		}
 
@@ -64,8 +70,7 @@ public class MainPage extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setTitle(R.string.home_page_button_title);
 		getFragmentManager().beginTransaction()
-				.replace(android.R.id.content, new HomePageFragment())
-				.commit();
+				.replace(android.R.id.content, new HomePageFragment()).commit();
 	}
 
 	@Override
@@ -109,18 +114,28 @@ public class MainPage extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * Makes a decision on which actions to take based on whether the account
+	 * was deleted from the server or not.
+	 * 
+	 * @param success
+	 */
 	private void handleAccountDeletion(boolean success) {
 		deleteProgress.dismiss();
 
 		if (success) {
 			showDataDeletionProgress();
-			deleteAccountData();			
+			deleteAccountData();
 		} else {
 			showDeleteUnsuccessfulDialog();
 		}
 
 	}
 
+	/**
+	 * Shows a confirmation dialog to the user confirming that they wish to
+	 * delete their account.
+	 */
 	private void showAreYouSureDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Are you sure you want to delete your account?");
@@ -150,16 +165,28 @@ public class MainPage extends ActionBarActivity {
 
 	}
 
+	/**
+	 * Shows a progress dialog informing the user that their account is being
+	 * deleted from the server.
+	 */
 	private void showServerProgress() {
 		deleteProgress = ProgressDialog.show(this, "Deleting Account",
 				"Communicating with the server");
 	}
 
+	/**
+	 * Shows a progress dialog informing the user that the system is deleting
+	 * their app files.
+	 */
 	private void showDataDeletionProgress() {
 		dataDeletionProgress = ProgressDialog.show(this, "Deleting App Files",
 				"Deleting work packets");
 	}
 
+	/**
+	 * Shows a dialog box informing the user that their account was successfully
+	 * deleted.
+	 */
 	private void showDeleteSuccessfulDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Account Successfully Deleted");
@@ -176,6 +203,10 @@ public class MainPage extends ActionBarActivity {
 		builder.show();
 	}
 
+	/**
+	 * Shows a dialog box informing the user that their details were not deleted
+	 * from the server.
+	 */
 	private void showDeleteUnsuccessfulDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Delete Unsuccessful");
@@ -191,12 +222,19 @@ public class MainPage extends ActionBarActivity {
 		builder.show();
 	}
 
+	/**
+	 * Moves the user to the register page. This should only be called if the
+	 * user has deleted their account.
+	 */
 	private void moveToRegisterPage() {
-		Intent moveToRegisterPage = new Intent(this, MainActivity.class);
+		Intent moveToRegisterPage = new Intent(this, RegisterPage.class);
 		startActivity(moveToRegisterPage);
 		finish();
 	}
 
+	/**
+	 * starts the thread that deletes all of the user's account data.
+	 */
 	private void deleteAccountData() {
 		DeleteAccountRunnable dataDeleterRunnable = new DeleteAccountRunnable(
 				this, dataDeletionHandler);

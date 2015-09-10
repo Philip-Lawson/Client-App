@@ -33,6 +33,8 @@ public class DormantService extends Service {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
+		
 		// sets up the alarm manager and the broadcast receiver to listen for
 		// the alarm
 		alarmManager = (AlarmManager) this

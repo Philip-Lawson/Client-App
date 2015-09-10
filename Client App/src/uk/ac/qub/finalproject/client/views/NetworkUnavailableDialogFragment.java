@@ -11,6 +11,9 @@ import android.os.Bundle;
 import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * A ready made dialog fragment that informs the user that a network action
+ * cannot be performed right now due to the network being unavailable.
+ * 
  * @author Phil
  *
  */
@@ -21,14 +24,13 @@ public class NetworkUnavailableDialogFragment extends DialogFragment {
 		builder.setMessage(R.string.network_unavailable_text);
 		builder.setTitle(R.string.network_unavailable_title);
 		builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				dialog.cancel();
 			}
 		});
-		
+
 		return builder.create();
 	}
 }

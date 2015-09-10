@@ -37,6 +37,11 @@ public class NetworkService extends Service {
 		return null;
 	}
 
+	/**
+	 * Starts the correct service based on the request number received.
+	 * 
+	 * @param requestNum
+	 */
 	private void processTask(int requestNum) {
 		switch (requestNum) {
 		case (ClientRequest.CHANGE_EMAIL):

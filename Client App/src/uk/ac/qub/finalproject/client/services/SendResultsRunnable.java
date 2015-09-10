@@ -28,6 +28,10 @@ public class SendResultsRunnable extends RunnableClientTemplate {
 	 * The list of completed results to be sent to the server.
 	 */
 	private ResultsPacketList resultsPacketList;
+
+	/**
+	 * The handler used to handle requests from the server.
+	 */
 	private AbstractRequestHandler requestHandler;
 
 	public SendResultsRunnable(Context context, Service service,

@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="uk.ac.qub.finalproject.client.views.MainActivity"
+            android:name="uk.ac.qub.finalproject.client.views.RegisterPage"
             android:label="Register" >
         </activity>
         <activity

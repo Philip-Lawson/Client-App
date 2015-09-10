@@ -83,9 +83,7 @@ public class HomePageFragment extends Fragment {
 				.findViewById(R.string.home_page_num_packets_processed_id);
 		int packetsProcessed = pref.getInt(
 				getString(R.string.packets_completed_key), 0);
-		String text = getString(R.string.home_page_num_packets_processed_text_part1)
-				+ " "
-				+ packetsProcessed
+		String text = packetsProcessed
 				+ " "
 				+ getString(R.string.home_page_num_packets_processed_text_part2);
 
@@ -142,6 +140,12 @@ public class HomePageFragment extends Fragment {
 
 	}
 
+	/**
+	 * Configures the change email button and adds an onClickListener to the
+	 * button.
+	 * 
+	 * @param view
+	 */
 	private void setupChangeEmailButton(View view) {
 		changeEmailButton = (Button) view
 				.findViewById(R.string.home_page_change_email_button_id);
@@ -155,10 +159,21 @@ public class HomePageFragment extends Fragment {
 		});
 	}
 
+	/**
+	 * Configures the processing button. Adds an onClickListener that will
+	 * change the text of the button based on the current processing status and
+	 * will either start or stop background processing.<br>
+	 * </br> e.g. If the button says 'Stop Processing', when it is clicked all
+	 * processing will be stopped and the text of the button will change to
+	 * 'Start Processing'.
+	 * 
+	 * 
+	 * @param view
+	 */
 	private void setupProcessingButton(View view) {
 		startStopProcessing = (Button) view
 				.findViewById(R.string.home_page_processing_button_id);
-		if (isMyServiceRunning(DataProcessingService.class)) {
+		if (isProcessingRunning(DataProcessingService.class)) {
 			startStopProcessing
 					.setText(getString(R.string.home_page_processing_button_stop_processing_text));
 		}
@@ -216,8 +231,16 @@ public class HomePageFragment extends Fragment {
 		});
 	}
 
+	/**
+	 * Opens a dialog box with a text field and a checkbox to allow the user to
+	 * change their email address or their anonymous status. This includes
+	 * validation for the new email address.<br>
+	 * </br>The ChangeEmailAddressService will only be triggered if the email
+	 * address is changed to something new, or if the user changes their
+	 * anonymous status.
+	 */
 	private void openChangeEmailDialog() {
-
+		// inflate the view and set up the textfield and checked text view
 		LayoutInflater factory = LayoutInflater.from(getActivity());
 		final View changeEmailView = factory.inflate(
 				R.layout.change_email_dialog_view, null);
@@ -235,6 +258,7 @@ public class HomePageFragment extends Fragment {
 		final CheckedTextView isAnonymousCheckBox = (CheckedTextView) changeEmailView
 				.findViewById(R.string.change_email_remain_anonymous_check_id);
 
+		// sets the text and the checked text to the user's current preferences
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(getActivity());
 		String email = pref.getString(getString(R.string.email_key), "");
@@ -269,6 +293,7 @@ public class HomePageFragment extends Fragment {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						// retrieve user details and their new email address
 						SharedPreferences pref = PreferenceManager
 								.getDefaultSharedPreferences(getActivity());
 						String newEmail = changeEmailText.getText().toString();
@@ -278,6 +303,8 @@ public class HomePageFragment extends Fragment {
 								getString(R.string.anonymous_key), false);
 
 						if (isAnonymousCheckBox.isChecked()) {
+							// starts the change email service if
+							// the user's anonymous status has changed
 							anonymousCheckedTextView.setChecked(true);
 
 							if (!userWasAnonymous) {
@@ -290,6 +317,7 @@ public class HomePageFragment extends Fragment {
 
 							dialog.dismiss();
 						} else if (EmailValidator.emailIsValid(newEmail)) {
+							// change the properties on the page
 							emailText.setText(newEmail);
 							pref.edit()
 									.putBoolean(
@@ -297,6 +325,9 @@ public class HomePageFragment extends Fragment {
 											false).apply();
 							anonymousCheckedTextView.setChecked(false);
 
+							// if there is a new email address or the user was
+							// anonymous the change email address service is
+							// started
 							if (!oldEmail.equals(newEmail) || userWasAnonymous) {
 								pref.edit()
 										.putString(
@@ -307,6 +338,8 @@ public class HomePageFragment extends Fragment {
 
 							dialog.dismiss();
 						} else {
+							// notify the user that they entered an invalid
+							// email
 							FragmentTransaction fragment = getFragmentManager()
 									.beginTransaction();
 							DialogFragment invalidEmailDialog = new InvalidEmailDialogFragment();
@@ -327,23 +360,21 @@ public class HomePageFragment extends Fragment {
 		dialogBuilder.show();
 	}
 
+	/**
+	 * Starts the background service to change the user's email details on the
+	 * server.
+	 */
 	private void startChangeEmailService() {
-		boolean userIsAnonymous = PreferenceManager
-				.getDefaultSharedPreferences(getActivity()).getBoolean(
-						getString(R.string.anonymous_key), false);
-
-		if (userIsAnonymous) {
-			Toast.makeText(
-					getActivity(),
-					"Your email will remain saved on your device for convenience",
-					Toast.LENGTH_LONG).show();
-		}
-
 		Intent changeEmailService = new Intent(getActivity(),
 				ChangeEmailAddressService.class);
 		getActivity().startService(changeEmailService);
 	}
 
+	/**
+	 * Changes the user's permission to process data.
+	 * 
+	 * @param permission
+	 */
 	private void changeUserPermitsProcessingPref(boolean permission) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(getActivity());
@@ -353,7 +384,13 @@ public class HomePageFragment extends Fragment {
 
 	}
 
-	private boolean isMyServiceRunning(Class<?> serviceClass) {
+	/**
+	 * Checks to see if background processing is running on startup.
+	 * 
+	 * @param serviceClass
+	 * @return
+	 */
+	private boolean isProcessingRunning(Class<?> serviceClass) {
 		ActivityManager manager = (ActivityManager) getActivity()
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		for (RunningServiceInfo service : manager

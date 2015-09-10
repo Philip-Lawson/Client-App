@@ -60,6 +60,9 @@ public class DeregisterUserThread extends RunnableClientTemplate {
 
 	@Override
 	protected void finish() {
+		// sends a callback to the caller page
+		// with a boolean flag confirming if the
+		// account delete was successful
 		Message msg = Message.obtain();
 		Bundle b = new Bundle();
 		b.putBoolean(MainPage.DEREGISTRATION_SUCCESS, deregisterSuccess);

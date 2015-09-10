@@ -48,6 +48,16 @@ public class NetworkInfoReceiver extends BroadcastReceiver {
 
 	}
 
+	/**
+	 * Checks to see if the device is currently connected to the internet within
+	 * the preferences specified by the user.
+	 * 
+	 * @param pref
+	 * @param networkKey
+	 * @param wifiOnly
+	 * @param networkInfo
+	 * @return
+	 */
 	private boolean isConnected(SharedPreferences pref, String networkKey,
 			String wifiOnly, int networkInfo) {
 

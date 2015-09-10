@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"    
-    tools:context="uk.ac.qub.finalproject.client.views.MainActivity" >    
+    tools:context="uk.ac.qub.finalproject.client.views.RegisterPage" >    
     
     <ImageView 
         android:layout_above="@string/register_email_field_id"

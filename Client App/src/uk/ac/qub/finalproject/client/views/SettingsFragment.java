@@ -11,6 +11,11 @@ import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import uk.ac.qub.finalproject.client.views.R;
 
 /**
+ * The SettingsFragment allows the user to change their settings. It extends the
+ * preference fragment class and uses the built in preference widgets to
+ * maintain a look and feel consistent with other apps. It uses a change
+ * listener to transfer files if the user changes their storage preference.
+ * 
  * @author Phil
  *
  */
@@ -22,7 +27,18 @@ public class SettingsFragment extends PreferenceFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_preferences);
+		setupPreferenceListener();
+	}
 
+	@Override
+	public void onDestroy() {
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		prefs.unregisterOnSharedPreferenceChangeListener(prefListener);
+		super.onDestroy();
+	}
+
+	private void setupPreferenceListener() {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getActivity());
 
@@ -41,15 +57,6 @@ public class SettingsFragment extends PreferenceFragment {
 		};
 
 		prefs.registerOnSharedPreferenceChangeListener(prefListener);
-
-	}
-
-	@Override
-	public void onDestroy() {
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(getActivity());
-		prefs.unregisterOnSharedPreferenceChangeListener(prefListener);
-		super.onDestroy();
 	}
 
 }

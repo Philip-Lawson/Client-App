@@ -109,6 +109,12 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 
 	}
 
+	/**
+	 * Helper method checks the current battery status to see if it's feasible
+	 * to start processing.
+	 * 
+	 * @return
+	 */
 	private boolean canStartProcessing() {
 		IntentFilter intentFilter = new IntentFilter(
 				Intent.ACTION_BATTERY_CHANGED);
@@ -121,6 +127,14 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 				pref)) && userPermitsProcessing(pref);
 	}
 
+	/**
+	 * Checks to see if the battery is charging. Note that if the user does not
+	 * have charging enabled this will return false.
+	 * 
+	 * @param batteryInfo
+	 * @param pref
+	 * @return
+	 */
 	private boolean isCharging(Intent batteryInfo, SharedPreferences pref) {
 		boolean chargingEnabled = pref.getBoolean(
 				context.getString(R.string.charging_key), true);
@@ -132,11 +146,25 @@ public class ServerRequestHandler extends AbstractRequestHandler {
 
 	}
 
+	/**
+	 * Returns true if the user currently permits processing.
+	 * 
+	 * @param pref
+	 * @return
+	 */
 	private boolean userPermitsProcessing(SharedPreferences pref) {
 		return pref.getBoolean(
 				context.getString(R.string.user_permits_processing_key), true);
 	}
 
+	/**
+	 * Checks to see if the battery charge is above the user's specified
+	 * threshold.
+	 * 
+	 * @param batteryInfo
+	 * @param pref
+	 * @return
+	 */
 	private boolean aboveThreshold(Intent batteryInfo, SharedPreferences pref) {
 		String chargingPref = pref.getString(
 				context.getString(R.string.battery_limit_key), "0");

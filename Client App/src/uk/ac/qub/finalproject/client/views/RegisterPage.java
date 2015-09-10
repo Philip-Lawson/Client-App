@@ -32,8 +32,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+/**
+ * The register page is the first point of contact to the app for a new user. It
+ * allows the user to register with or without an email. The user must register
+ * before they are permitted to move to the home page. 
+ * 
+ * @author Phil
+ *
+ */
 @SuppressWarnings("deprecation")
-public class MainActivity extends ActionBarActivity {
+public class RegisterPage extends ActionBarActivity {
 
 	public static String REGISTRATION_SUCCESS = "Registration Successful?";
 
@@ -200,7 +208,8 @@ public class MainActivity extends ActionBarActivity {
 	 * Helper method sets up the persistence layer.
 	 */
 	private void setupPersistence() {
-		FileAndPrefStorage persistenceLayer = FileAndPrefStorage.getInstance(this);
+		FileAndPrefStorage persistenceLayer = FileAndPrefStorage
+				.getInstance(this);
 		persistenceLayer.setupStorage();
 	}
 
@@ -231,6 +240,12 @@ public class MainActivity extends ActionBarActivity {
 
 	}
 
+	/**
+	 * Starts the networking thread that will register the device with the
+	 * server.
+	 * 
+	 * @param registrationPack
+	 */
 	private void startRegistration(RegistrationPack registrationPack) {
 		RunnableClientTemplate registerClient = new RegisterClientThread(
 				getBaseContext(), registrationPack, registrationHandler);
@@ -308,7 +323,7 @@ public class MainActivity extends ActionBarActivity {
 		private boolean registrationSuccess;
 
 		public RegistrationSuccessDialogFragment(boolean registrationSuccess,
-				MainActivity main) {
+				RegisterPage main) {
 			super();
 			this.registrationSuccess = registrationSuccess;
 		}

@@ -3,6 +3,7 @@
  */
 package uk.ac.qub.finalproject.client.views;
 
+import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import uk.ac.qub.finalproject.client.services.BatteryMonitorService;
 import uk.ac.qub.finalproject.client.services.DataProcessingService;
@@ -29,6 +30,11 @@ import android.preference.PreferenceManager;
 public class DeleteAccountRunnable implements Runnable {
 
 	private Context context;
+
+	/**
+	 * The handler registered with the UI page that called this runnable. It
+	 * will be called when the deletion is complete.
+	 */
 	private Handler handler;
 
 	public DeleteAccountRunnable(Context context, Handler handler) {
@@ -36,12 +42,22 @@ public class DeleteAccountRunnable implements Runnable {
 		this.handler = handler;
 	}
 
+	/**
+	 * Deletes all data from the shared preferences.
+	 * 
+	 * @param context
+	 */
 	private void deletePreferences(Context context) {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		pref.edit().clear().commit();
 	}
 
+	/**
+	 * Unregisters the network broadcast receiver.
+	 * 
+	 * @param context
+	 */
 	private void unregisterReceivers(Context context) {
 		ComponentName networkInfoListener = new ComponentName(context,
 				NetworkInfoReceiver.class);
@@ -51,6 +67,11 @@ public class DeleteAccountRunnable implements Runnable {
 				PackageManager.DONT_KILL_APP);
 	}
 
+	/**
+	 * Stops all application services.
+	 * 
+	 * @param context
+	 */
 	private void stopServices(Context context) {
 		Class<?>[] services = { BatteryMonitorService.class,
 				DataProcessingService.class, DormantService.class,
@@ -62,8 +83,14 @@ public class DeleteAccountRunnable implements Runnable {
 		}
 	}
 
+	/**
+	 * Deletes all data from the persistence layer.
+	 * 
+	 * @param context
+	 */
 	private void deleteData(Context context) {
-		FileAndPrefStorage persistence = FileAndPrefStorage.getInstance(context);
+		DataStorage persistence = FileAndPrefStorage
+				.getInstance(context);
 		persistence.deleteAllData();
 	}
 

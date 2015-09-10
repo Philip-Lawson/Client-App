@@ -34,9 +34,10 @@ public class BatteryMonitorService extends Service {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		IntentFilter intentFilter = new IntentFilter(
 				Intent.ACTION_BATTERY_CHANGED);
-		this.registerReceiver(batteryReceiver, intentFilter);
+		this.registerReceiver(batteryReceiver, intentFilter);		
 	}
 
 	@Override
@@ -47,6 +48,7 @@ public class BatteryMonitorService extends Service {
 	@Override
 	public void onDestroy() {
 		this.unregisterReceiver(batteryReceiver);
+		super.onDestroy();
 	}
 
 	/*

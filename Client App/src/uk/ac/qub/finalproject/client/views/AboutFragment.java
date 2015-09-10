@@ -35,6 +35,9 @@ public class AboutFragment extends Fragment {
 		donateButton = (Button) view
 				.findViewById(R.string.about_page_donate_button_id);
 
+		// if the implementer wants to have a donate page accessible
+		// the donate button will be visible and will have an onClickListener
+		// registered to it that will open a browser to their specified link
 		if (Implementations.donateButtonEnabled()) {
 			donateButton.setOnClickListener(new OnClickListener() {
 
@@ -48,7 +51,7 @@ public class AboutFragment extends Fragment {
 				}
 
 			});
-			
+
 		} else {
 			donateButton.setVisibility(View.GONE);
 		}

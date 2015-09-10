@@ -9,6 +9,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+/**
+ * This class registers the client with the server based on the information
+ * passed to it in the RegistrationPack. It communicates with the calling UI
+ * thread by passing a boolean to the Handler that is passed in through the
+ * constructor.
+ * 
+ * @author Phil
+ *
+ */
 public class RegisterClientThread extends RunnableClientTemplate {
 
 	private RegistrationPack registrationPack;
@@ -22,8 +31,8 @@ public class RegisterClientThread extends RunnableClientTemplate {
 		super(context);
 	}
 
-	public RegisterClientThread(Context context, RegistrationPack registrationPack,
-			Handler handler) {
+	public RegisterClientThread(Context context,
+			RegistrationPack registrationPack, Handler handler) {
 		super(context);
 		this.registrationPack = registrationPack;
 		this.handler = handler;
@@ -42,18 +51,19 @@ public class RegisterClientThread extends RunnableClientTemplate {
 
 		Message msg = Message.obtain();
 		Bundle b = new Bundle();
-		b.putBoolean(MainActivity.REGISTRATION_SUCCESS, registrationSuccessful);
+		b.putBoolean(RegisterPage.REGISTRATION_SUCCESS, registrationSuccessful);
 		msg.setData(b);
 		handler.sendMessage(msg);
 	}
-	
+
 	@Override
-	protected void informUserConnectionUnsuccessful(){
+	protected void informUserConnectionUnsuccessful() {
 		boolean registrationUnsuccessful = false;
-		
+
 		Message msg = Message.obtain();
 		Bundle b = new Bundle();
-		b.putBoolean(MainActivity.REGISTRATION_SUCCESS, registrationUnsuccessful);
+		b.putBoolean(RegisterPage.REGISTRATION_SUCCESS,
+				registrationUnsuccessful);
 		msg.setData(b);
 		handler.sendMessage(msg);
 	}
