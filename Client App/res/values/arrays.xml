@@ -25,7 +25,7 @@
     
     <string-array name="network_options">
         <item>@string/network_description_wifi</item>
-        <item>@string/network_description_wfi_data</item>
+        <item>@string/network_description_wifi_data</item>
     </string-array>
        
 </resources>

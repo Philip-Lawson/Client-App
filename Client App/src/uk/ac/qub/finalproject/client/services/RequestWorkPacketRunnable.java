@@ -6,8 +6,11 @@ package uk.ac.qub.finalproject.client.services;
 import java.io.IOException;
 
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.app.Service;
 import android.content.Context;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.provider.Settings.Secure;
 
 /**
@@ -57,7 +60,15 @@ public class RequestWorkPacketRunnable extends RunnableClientTemplate {
 	@Override
 	public void finish() {
 		workDB.deleteNetworkRequest(ClientRequest.REQUEST_WORK_PACKET);
+		setHasBegunProcessing();
 		service.stopSelf();
+	}
+
+	private void setHasBegunProcessing() {
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(context)
+				.edit();
+		edit.putBoolean(context.getString(R.string.processing_started_key),
+				true).apply();
 	}
 
 }

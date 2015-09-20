@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import java.io.IOException;
 
@@ -45,9 +45,7 @@ public class DeregisterUserThread extends RunnableClientTemplate {
 	@Override
 	protected void communicateWithServer() throws IOException {
 		String deviceID = Secure.getString(context.getContentResolver(),
-				Secure.ANDROID_ID);
-		RegistrationPack pack = new RegistrationPack();
-		pack.setAndroidID(deviceID);
+				Secure.ANDROID_ID);		
 
 		output.reset();
 		output.writeInt(ClientRequest.DEREGISTER_DEVICE);

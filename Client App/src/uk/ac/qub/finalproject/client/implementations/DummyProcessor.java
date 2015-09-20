@@ -21,11 +21,14 @@ public class DummyProcessor extends AbstractDataProcessor {
 
 	@Override
 	protected Serializable processData(Serializable obj) {
-		// TODO Auto-generated method stub
+		
 		Integer number;
 		try {
 			number = (Integer) obj;
+			Thread.sleep(10000);
 		} catch (ClassCastException e) {			
+			return -1;
+		} catch (InterruptedException e){
 			return -1;
 		}
 		

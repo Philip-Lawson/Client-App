@@ -1,10 +1,10 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import uk.ac.qub.finalproject.client.services.DataProcessingService;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

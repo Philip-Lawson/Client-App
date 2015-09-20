@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uk.ac.qub.finalproject.client.views"
+    package="uk.ac.qub.finalproject.s40143289.client.views"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="19"
+        android:minSdkVersion="16"
         android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="uk.ac.qub.finalproject.client.views.SplashActivity"
+            android:name="uk.ac.qub.finalproject.s40143289.client.views.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,15 +27,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="uk.ac.qub.finalproject.client.views.RegisterPage"
+            android:name="uk.ac.qub.finalproject.s40143289.client.views.RegisterPage"
             android:label="Register" >
         </activity>
         <activity
-            android:name="uk.ac.qub.finalproject.client.views.SettingsActivity"
+            android:name="uk.ac.qub.finalproject.s40143289.client.views.SettingsActivity"
             android:label="@string/settings_page_title" >
         </activity>
         <activity
-            android:name="uk.ac.qub.finalproject.client.views.MainPage"
+            android:name="uk.ac.qub.finalproject.s40143289.client.views.MainPage"
             android:label="@string/main_page_id" >
         </activity>
 
@@ -50,14 +50,14 @@
         <service android:name="uk.ac.qub.finalproject.client.services.StopAllProcessingService" />
 
         <receiver
-            android:name="uk.ac.qub.finalproject.client.views.NetworkInfoReceiver"
+            android:name="uk.ac.qub.finalproject.s40143289.client.views.NetworkInfoReceiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" >
                 </action>
             </intent-filter>
         </receiver>
-        <receiver android:name="uk.ac.qub.finalproject.client.views.BatteryLevelBroadcastReceiver" />
+        <receiver android:name="uk.ac.qub.finalproject.s40143289.client.views.BatteryLevelBroadcastReceiver" />
     </application>
 
 </manifest>

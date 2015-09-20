@@ -5,13 +5,13 @@ package uk.ac.qub.finalproject.client.services;
 
 import java.io.IOException;
 
+import uk.ac.qub.finalproject.calculationclasses.RegistrationPack;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.Settings.Secure;
-import uk.ac.qub.finalproject.client.views.R;
-import uk.ac.qub.finalproject.client.views.RegistrationPack;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 
 /**
  * This runnable sends a request to the server to change the stored email
@@ -54,14 +54,17 @@ public class ChangeEmailRunnable extends RunnableClientTemplate {
 		String defaultAddress = context
 				.getString(R.string.home_page_email_default_text);
 
+		boolean userIsAnonymous = pref.getBoolean(
+				context.getString(R.string.anonymous_key), false);
+
 		registrationPack = new RegistrationPack();
 		registrationPack.setAndroidID(deviceID);
 
-		if (!emailAddress.equals(defaultAddress)) {
-			registrationPack.setEmailAddress(emailAddress);
-		} else {
+		if (emailAddress.equals(defaultAddress) || userIsAnonymous) {
 			// send a blank string rather than allowing a null to be sent
 			registrationPack.setEmailAddress("");
+		} else {
+			registrationPack.setEmailAddress(emailAddress);
 		}
 
 	}

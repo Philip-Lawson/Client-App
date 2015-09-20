@@ -1,19 +1,16 @@
 package uk.ac.qub.finalproject.client.services;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
+import uk.ac.qub.finalproject.client.implementations.Implementations;
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -34,8 +31,7 @@ import android.preference.PreferenceManager;
  */
 public abstract class RunnableClientTemplate implements Runnable {
 
-	private static final int PORT_NUMBER = 12346;
-	private static final String HOST = "10.0.2.2";
+	private static final int PORT_NUMBER = Implementations.getPortNumber();
 	protected ObjectInputStream input;
 	protected ObjectOutputStream output;
 
@@ -67,18 +63,39 @@ public abstract class RunnableClientTemplate implements Runnable {
 	private boolean networkAvailable() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		int networkInfo = connectivityManager.getActiveNetworkInfo().getType();
+		NetworkInfo[] networks = connectivityManager.getAllNetworkInfo();
 
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		String networkKey = context.getString(R.string.wifi_key);
-		String wifiOnly = context.getString(R.string.network_description_wifi);
-
-		if (pref.getString(networkKey, wifiOnly).equals(wifiOnly)) {
-			return networkInfo == ConnectivityManager.TYPE_WIFI;
+		// network info can sometimes be null
+		if (null == networks) {
+			return false;
 		} else {
-			return networkInfo == ConnectivityManager.TYPE_WIFI
-					|| networkInfo == ConnectivityManager.TYPE_MOBILE;
+			SharedPreferences pref = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			String networkKey = context.getString(R.string.wifi_key);
+			String wifiAndData = context
+					.getString(R.string.network_description_wifi_data);
+
+			if (pref.getString(networkKey, wifiAndData).equals(wifiAndData)) {
+				for (NetworkInfo networkInfo : networks) {
+					if (networkInfo.getTypeName().equalsIgnoreCase("WIFI")
+							|| networkInfo.getTypeName().equalsIgnoreCase(
+									"MOBILE")) {
+						if (networkInfo.isConnected()) {
+							return true;
+						}
+					}
+				}
+			} else {
+				for (NetworkInfo networkInfo : networks) {
+					if (networkInfo.getTypeName().equalsIgnoreCase("WIFI")) {
+						if (networkInfo.isConnected()) {
+							return true;
+						}
+					}
+				}
+			}
+			
+			return false;
 		}
 	}
 
@@ -91,20 +108,14 @@ public abstract class RunnableClientTemplate implements Runnable {
 	}
 
 	private void connectToServer() throws UnknownHostException, IOException {
-		// SSLSocketFactory factory = (SSLSocketFactory)
-		// SSLSocketFactory.getDefault();
-		// client = (SSLSocket)
-		// factory.createSocket(InetAddress.getByName(HOST), PORT_NUMBER);
-		client = new Socket(InetAddress.getByName(HOST), PORT_NUMBER);
-
+		client = new Socket();
+		client.connect(new InetSocketAddress(InetAddress.getByName(Implementations.getHost()),
+				PORT_NUMBER), 3000);
 	}
 
 	private void getStreams() throws IOException {
-		input = new ObjectInputStream(new BufferedInputStream(
-				client.getInputStream()));
-		output = new ObjectOutputStream(new BufferedOutputStream(
-				client.getOutputStream()));
-		output.flush();
+		output = new ObjectOutputStream(client.getOutputStream());
+		input = new ObjectInputStream(client.getInputStream());
 	}
 
 	/**
@@ -157,7 +168,7 @@ public abstract class RunnableClientTemplate implements Runnable {
 		} catch (UnknownHostException e) {
 
 		} catch (IOException e) {
-
+			informUserConnectionUnsuccessful();
 		} finally {
 			try {
 				if (output != null)

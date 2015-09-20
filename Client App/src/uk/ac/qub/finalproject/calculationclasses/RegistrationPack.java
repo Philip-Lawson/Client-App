@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.calculationclasses;
 
 import java.io.Serializable;
 

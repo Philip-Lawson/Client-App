@@ -1,7 +1,8 @@
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import java.io.IOException;
 
+import uk.ac.qub.finalproject.calculationclasses.RegistrationPack;
 import uk.ac.qub.finalproject.client.services.ClientRequest;
 import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
 import android.content.Context;

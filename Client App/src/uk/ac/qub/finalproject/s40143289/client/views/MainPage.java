@@ -1,13 +1,14 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,7 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 
 /**
  * This is the main page of the app. It acts as a hub to show the various page
@@ -32,16 +33,18 @@ public class MainPage extends ActionBarActivity {
 	public static String DEREGISTRATION_SUCCESS = "Account deleted";
 	private ProgressDialog deleteProgress;
 	private ProgressDialog dataDeletionProgress;
+	private Thread deleteAccountThread;
 
 	/**
-	 * This handler is registered with the deregistration thread. The thread
-	 * calls handle message when deregistration process is complete.
+	 * This handler is registered with the deregistration networking thread. The
+	 * thread calls handle message when deregistration process is complete.
 	 */
 	private final Handler accountDeletionHandler = new Handler(
 			Looper.getMainLooper()) {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			unlockScreenOrientation();
 			Bundle b = msg.getData();
 			handleAccountDeletion(b.getBoolean(DEREGISTRATION_SUCCESS));
 		}
@@ -60,6 +63,7 @@ public class MainPage extends ActionBarActivity {
 				dataDeletionProgress.dismiss();
 			}
 
+			unlockScreenOrientation();
 			showDeleteSuccessfulDialog();
 		}
 
@@ -143,12 +147,7 @@ public class MainPage extends ActionBarActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				RunnableClientTemplate deregisterClient = new DeregisterUserThread(
-						getApplicationContext(), accountDeletionHandler);
-				Thread deleteAccountThread = new Thread(deregisterClient);
-				deleteAccountThread.setDaemon(true);
-				deleteAccountThread.start();
-				showServerProgress();
+				startDelete();
 			}
 
 		});
@@ -222,6 +221,32 @@ public class MainPage extends ActionBarActivity {
 		builder.show();
 	}
 
+	private void startDelete() {
+		lockScreenOrientation();
+		RunnableClientTemplate deregisterClient = new DeregisterUserThread(
+				getBaseContext(), accountDeletionHandler);
+		deleteAccountThread = new Thread(deregisterClient);
+		deleteAccountThread.setDaemon(true);
+		deleteAccountThread.start();
+		showServerProgress();
+	}
+
+	/*
+	 * Helper method to lock the screen orientation to avoid cancelling a thread
+	 * triggered from the UI thread.
+	 */
+	private void lockScreenOrientation() {
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+	}
+
+	/**
+	 * Helper method to unlock the screen when a background thread has finished
+	 * running.
+	 */
+	private void unlockScreenOrientation() {
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+	}
+
 	/**
 	 * Moves the user to the register page. This should only be called if the
 	 * user has deleted their account.
@@ -236,6 +261,7 @@ public class MainPage extends ActionBarActivity {
 	 * starts the thread that deletes all of the user's account data.
 	 */
 	private void deleteAccountData() {
+		lockScreenOrientation();
 		DeleteAccountRunnable dataDeleterRunnable = new DeleteAccountRunnable(
 				this, dataDeletionHandler);
 		Thread dataDeleterThread = new Thread(dataDeleterRunnable);

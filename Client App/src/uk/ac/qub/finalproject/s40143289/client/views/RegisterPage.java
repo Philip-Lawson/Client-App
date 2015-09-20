@@ -1,8 +1,10 @@
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
+import uk.ac.qub.finalproject.calculationclasses.RegistrationPack;
+import uk.ac.qub.finalproject.client.implementations.Implementations;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import uk.ac.qub.finalproject.client.services.RunnableClientTemplate;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +15,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
@@ -35,7 +38,7 @@ import android.widget.TextView.OnEditorActionListener;
 /**
  * The register page is the first point of contact to the app for a new user. It
  * allows the user to register with or without an email. The user must register
- * before they are permitted to move to the home page. 
+ * before they are permitted to move to the home page.
  * 
  * @author Phil
  *
@@ -49,6 +52,8 @@ public class RegisterPage extends ActionBarActivity {
 	private EditText emailAddressText;
 	private Button registerButton;
 	private ProgressDialog registrationDialog;
+	private EditText demoURL;
+	private Button saveDemoUrl;
 
 	/**
 	 * This handler is registered with the registration thread. The registration
@@ -68,7 +73,7 @@ public class RegisterPage extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.register_page);
 		PreferenceManager.setDefaultValues(this, R.xml.settings_preferences,
 				false);
 
@@ -76,7 +81,7 @@ public class RegisterPage extends ActionBarActivity {
 		setupAnonymousField();
 		setupEmailAddressText();
 		setupRegisterButton();
-
+		setupDemoURLWidgets();
 	}
 
 	@Override
@@ -214,6 +219,33 @@ public class RegisterPage extends ActionBarActivity {
 	}
 
 	/**
+	 * Helper method to set up demo widgets used to set the networking URL
+	 * during a demo.
+	 */
+	private void setupDemoURLWidgets() {
+		if (Implementations.isDemo){
+			demoURL = (EditText) findViewById(R.string.demo_url_edit_text_id);
+			demoURL.setEnabled(true);
+			demoURL.setVisibility(View.VISIBLE);
+			
+			saveDemoUrl = (Button) findViewById(R.string.demo_url_button_id);
+			saveDemoUrl.setText("SAVE URL");
+			saveDemoUrl.setEnabled(true);
+			saveDemoUrl.setVisibility(View.VISIBLE);
+			saveDemoUrl.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Implementations.setDemoHost(demoURL.getText().toString());					
+				}
+			});
+		}
+		
+		
+
+	}
+
+	/**
 	 * Shows a notification that the email entered is invalid.
 	 */
 	private void showInvalidEmailNotification() {
@@ -247,6 +279,10 @@ public class RegisterPage extends ActionBarActivity {
 	 * @param registrationPack
 	 */
 	private void startRegistration(RegistrationPack registrationPack) {
+		// locks the screen during networking to avoid accidentally cancelling
+		// the networking thread
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
 		RunnableClientTemplate registerClient = new RegisterClientThread(
 				getBaseContext(), registrationPack, registrationHandler);
 		Thread registrationThread = new Thread(registerClient);
@@ -358,6 +394,11 @@ public class RegisterPage extends ActionBarActivity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.cancel();
+
+							// unlocks the screen after the networking thread
+							// has completed
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
 							if (registrationSuccess) {
 								// if the user is not registering for the first
 								// time on this device the network broadcast

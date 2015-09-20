@@ -20,13 +20,13 @@ public class WorkPacketList extends ArrayList<IWorkPacket> {
 	 */
 	private static final long serialVersionUID = 9113939581476091482L;
 
-	private Long timeStamp;
+	private long timeStamp;
 
-	public Long getTimeStamp() {
+	public long getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(Long timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 

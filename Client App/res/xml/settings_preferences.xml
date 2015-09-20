@@ -18,7 +18,7 @@
 
     <!-- Network Settings -->
     <ListPreference
-        android:defaultValue="@string/network_description_wifi"
+        android:defaultValue="@string/network_description_wifi_data"
         android:entries="@array/network_options"
         android:entryValues="@array/network_options"
         android:dialogTitle="@string/network_settings_dialog_title"

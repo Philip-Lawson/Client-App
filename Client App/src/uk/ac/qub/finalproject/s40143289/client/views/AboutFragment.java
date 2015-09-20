@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import uk.ac.qub.finalproject.client.implementations.Implementations;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 
 /**
  * This fragment creates the about page view within the main page. It creates

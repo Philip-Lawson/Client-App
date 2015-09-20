@@ -3,6 +3,8 @@
  */
 package uk.ac.qub.finalproject.client.services;
 
+import java.util.concurrent.TimeUnit;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -34,7 +36,7 @@ public class DormantService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		// sets up the alarm manager and the broadcast receiver to listen for
 		// the alarm
 		alarmManager = (AlarmManager) this
@@ -48,16 +50,18 @@ public class DormantService extends Service {
 		};
 
 		registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ID));
-		
+
 		// sets the alarm to go off every day at an inexact time
 		// this will reduce battery usage by only triggering the broadcast
 		// receiver when the device is already awake
+		// the alarm is first set to go off a day from when it is set
 		pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
 				new Intent(INTENT_ID), 0);
-		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-				SystemClock.elapsedRealtime(), AlarmManager.INTERVAL_DAY,
-				pendingIntent);
-
+		alarmManager.setInexactRepeating(
+				AlarmManager.ELAPSED_REALTIME,
+				SystemClock.elapsedRealtime()
+						+ TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS),
+				AlarmManager.INTERVAL_DAY, pendingIntent);
 	}
 
 	@Override
@@ -94,7 +98,7 @@ public class DormantService extends Service {
 
 		if (percentSpaceAvailable > 10) {
 			Intent intent = new Intent(this, RequestWorkPacketsService.class);
-			startActivity(intent);
+			startService(intent);
 		}
 	}
 

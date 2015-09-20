@@ -1,10 +1,10 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import uk.ac.qub.finalproject.client.services.NetworkService;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,15 +33,14 @@ public class NetworkInfoReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		NetworkInfo[] networkInfo = connectivityManager.getAllNetworkInfo();
 
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		String networkKey = context.getString(R.string.wifi_key);
 		String wifiOnly = context.getString(R.string.network_description_wifi);
 
-		if (isConnected(pref, networkKey, wifiOnly, networkInfo.getType())
-				&& networkInfo.isConnected()) {
+		if (isConnected(pref, networkKey, wifiOnly, networkInfo)) {
 			Intent i = new Intent(context, NetworkService.class);
 			context.startService(i);
 		}
@@ -59,14 +58,27 @@ public class NetworkInfoReceiver extends BroadcastReceiver {
 	 * @return
 	 */
 	private boolean isConnected(SharedPreferences pref, String networkKey,
-			String wifiOnly, int networkInfo) {
+			String wifiOnly, NetworkInfo[] networks) {
 
 		if (pref.getString(networkKey, wifiOnly).equals(wifiOnly)) {
-			return networkInfo == ConnectivityManager.TYPE_WIFI;
+			for (NetworkInfo networkInfo : networks) {
+				if (networkInfo.getTypeName().equalsIgnoreCase("WIFI")) {
+					if (networkInfo.isConnected())
+						return true;
+				}
+			}
 		} else {
-			return networkInfo == ConnectivityManager.TYPE_WIFI
-					|| networkInfo == ConnectivityManager.TYPE_MOBILE;
+			for (NetworkInfo networkInfo : networks) {
+				if (networkInfo.getTypeName().equalsIgnoreCase("WIFI")
+						|| networkInfo.getTypeName().equalsIgnoreCase(
+								"MOBILE")) {
+					if (networkInfo.isConnected())
+						return true;
+				}
+			}
 		}
+		
+		return false;
 	}
 
 }

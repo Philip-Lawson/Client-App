@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
@@ -100,7 +100,7 @@ public class DeleteAccountRunnable implements Runnable {
 		unregisterReceivers(context);
 		stopServices(context);
 		deleteData(context);
-		handler.handleMessage(Message.obtain());
+		handler.sendMessage(Message.obtain());
 
 	}
 

@@ -6,7 +6,7 @@ package uk.ac.qub.finalproject.client.services;
 import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
 import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -71,6 +71,14 @@ public class DataProcessingRunnable implements Runnable {
 	}
 
 	/**
+	 * Allows the runnable to process work once the start method is called. Otherwise
+	 * the runnable will short circuit and exit before processing.
+	 */
+	public void setCanProcess() {
+		canContinue = true;
+	}
+
+	/**
 	 * Stops the runnable once it has finished its current work packet.
 	 */
 	public void stopRunnable() {
@@ -96,12 +104,13 @@ public class DataProcessingRunnable implements Runnable {
 
 		boolean workProcessed = false;
 
-		workStorage = FileAndPrefStorage.getInstance(
-				dataProcessingService.getApplicationContext());
+		workStorage = FileAndPrefStorage.getInstance(dataProcessingService
+				.getApplicationContext());
 
 		WorkPacketList workPackets = workStorage.loadWorkPacketList();
 		ResultsPacketList resultPackets;
 		IDataProcessor processor = workStorage.loadProcessorClass();
+		
 
 		// stop the service if processing cannot be completed at this point
 		if (null == processor || workPackets.size() < 1) {
@@ -111,15 +120,15 @@ public class DataProcessingRunnable implements Runnable {
 				// the service has been killed by the android OS
 			}
 		} else {
-			
+
 			isProcessing = true;
-			
+
 			while (workPackets.size() > 0 && canContinue) {
 				// set work and result packets
 				workPackets = workStorage.loadWorkPacketList();
 				resultPackets = workStorage.loadResultsPacketList();
 				resultPackets.setTimeStamp(workPackets.getTimeStamp());
-				
+
 				// notify the user of current progress
 				// if the process has been stopped we don't want to show a
 				// progress bar to the user.
@@ -127,7 +136,7 @@ public class DataProcessingRunnable implements Runnable {
 					dataProcessingService.updateProgress(resultPackets.size(),
 							workPackets.size());
 				}
-				
+
 				resultPackets.add(processor.execute(workPackets.remove(0)));
 
 				workStorage.saveResultsPacketList(resultPackets);

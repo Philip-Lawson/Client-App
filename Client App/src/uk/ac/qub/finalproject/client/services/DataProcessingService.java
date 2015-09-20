@@ -3,8 +3,8 @@
  */
 package uk.ac.qub.finalproject.client.services;
 
-import uk.ac.qub.finalproject.client.views.R;
-
+import uk.ac.qub.finalproject.s40143289.client.views.R;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -34,7 +34,7 @@ public class DataProcessingService extends Service {
 	 * The ID of the progress notification. This is used to ensure that only one
 	 * notification is pushed to the user.
 	 */
-	private static int PROGRESS_NOTIFICATION_ID = 1;
+	private static int PROGRESS_NOTIFICATION_ID = 1000;
 
 	private DataProcessingRunnable dataProcessingRunnable;
 	private Thread dataProcessingThread;
@@ -49,13 +49,15 @@ public class DataProcessingService extends Service {
 		dataProcessingThread
 				.setPriority(Process.THREAD_PRIORITY_LESS_FAVORABLE);
 
-		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);	
 		notificationBuilder = new NotificationCompat.Builder(this);
+		notificationBuilder.setAutoCancel(false);
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (!dataProcessingThread.isAlive()) {
+			dataProcessingRunnable.setCanProcess();
 			dataProcessingThread.start();
 		}
 
@@ -95,7 +97,8 @@ public class DataProcessingService extends Service {
 			notificationBuilder.setProgress(packetsComplete + packetsLeft,
 					packetsComplete, false);
 			notificationBuilder.setContentText(packetsComplete + " of "
-					+ (packetsComplete + packetsLeft) + " Results Complete!");
+					+ (packetsComplete + packetsLeft) + " Results Complete");
+			notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
 			notificationManager.notify(PROGRESS_NOTIFICATION_ID,
 					notificationBuilder.build());
 		}
@@ -114,8 +117,11 @@ public class DataProcessingService extends Service {
 			notificationBuilder.setProgress(0, 0, false);
 			notificationBuilder
 					.setContentText(getString(R.string.processing_complete));
+			notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+			
+			Notification notification = notificationBuilder.build();
 			notificationManager.notify(PROGRESS_NOTIFICATION_ID,
-					notificationBuilder.build());
+					notification);		
 		}
 	}
 
@@ -131,6 +137,7 @@ public class DataProcessingService extends Service {
 			notificationBuilder.setProgress(0, 0, false);
 			notificationBuilder
 					.setContentText(getString(R.string.processing_paused));
+			notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
 			notificationManager.notify(PROGRESS_NOTIFICATION_ID,
 					notificationBuilder.build());
 		}

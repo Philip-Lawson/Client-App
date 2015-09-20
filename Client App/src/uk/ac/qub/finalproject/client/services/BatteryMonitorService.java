@@ -3,7 +3,7 @@
  */
 package uk.ac.qub.finalproject.client.services;
 
-import uk.ac.qub.finalproject.client.views.BatteryLevelBroadcastReceiver;
+import uk.ac.qub.finalproject.s40143289.client.views.BatteryLevelBroadcastReceiver;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -37,7 +37,7 @@ public class BatteryMonitorService extends Service {
 		super.onCreate();
 		IntentFilter intentFilter = new IntentFilter(
 				Intent.ACTION_BATTERY_CHANGED);
-		this.registerReceiver(batteryReceiver, intentFilter);		
+		registerReceiver(batteryReceiver, intentFilter);	
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class BatteryMonitorService extends Service {
 	}
 
 	@Override
-	public void onDestroy() {
-		this.unregisterReceiver(batteryReceiver);
+	public void onDestroy() {		
+		unregisterReceiver(batteryReceiver);
 		super.onDestroy();
 	}
 

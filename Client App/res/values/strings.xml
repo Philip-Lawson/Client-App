@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Volunteer Science!</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Citizen Science!</string>
     <string name="action_settings">Settings</string>
     <string name="is_registered_key">Is Registered?</string>
     <string name="user_permits_processing_key">User Permits Processing</string>
 
     <!-- Strings for Register Page -->
+    <string name="demo_url_edit_text_id">Demo URL EditText</string>
+    <string name="demo_url_hint">Server URL</string>
+    <string name="demo_url_button_id">Demo URL Button</string>
     <string name="register_email_field_id">Email Field</string>
     <string name="register_email_field_text">Email Address</string>
     <string name="register_email_invalid_email_id">Invalid Email</string>
@@ -40,7 +42,7 @@
     <string name="network_settings_title">Network Settings</string>
     <string name="network_settings_dialog_title">Network Settings</string>
     <string name="network_description_wifi">Wifi only</string>
-    <string name="network_description_wfi_data">Wifi and Data</string>
+    <string name="network_description_wifi_data">Wifi and Data</string>
     <string name="storage_key">Storage Key</string>
     <string name="storage_settings_title">Data Storage</string>
     <string name="storage_title">Data Storage</string>
@@ -64,12 +66,14 @@
     <!-- Strings for Account Page -->
     <string name="packets_completed_key">Packets Completed</string>
     <string name="packets_complete_text">Number of Packets Completed: </string>
-
+    <string name="processing_started_key">The user has clicked the begin processing button</string>
+	<string name="begin_button_pushed">The user has clicked the begin button</string>
+    
     <!-- Strings for processing notifications -->
     <string name="processing_title">Processing Data</string>
     <string name="processing_complete">Processing Complete!</string>
     <string name="processing_packets">Processing Data</string>
-    <string name="processing_paused">Below Battery Limit: Processing Paused</string>
+    <string name="processing_paused">Processing Paused</string>
 
     <!-- Strings for main page -->
     <string name="main_page_id"></string>
@@ -114,9 +118,7 @@
     <string name="change_email_remain_anonymous_check_id">Anonymous check box</string>
 
     <!-- Strings for the Delete Account Page -->
-    <string name="delete_account_page_title">Delete Account</string>
-    <string name="delete_account_textview_id">Delete Account TextView</string>
-    <string name="delete_account_textview_text">When your account is deleted all of the app\'s data will be deleted and we will delete your details from our servers. Once your account is deleted you will be returned to the Register page.</string>
+    <string name="delete_account_page_title">Delete Account</string>   
     <string name="delete_account_button_id">Delete Account Button ID</string>
     <string name="delete_account_button_text">Delete Account</string>
 

@@ -1,13 +1,13 @@
 /**
  * 
  */
-package uk.ac.qub.finalproject.client.views;
+package uk.ac.qub.finalproject.s40143289.client.views;
 
 import uk.ac.qub.finalproject.client.services.BatteryMonitorService;
 import uk.ac.qub.finalproject.client.services.ChangeEmailAddressService;
 import uk.ac.qub.finalproject.client.services.DataProcessingService;
-import uk.ac.qub.finalproject.client.services.LoadProcessingClassService;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.client.services.RequestWorkPacketsService;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
@@ -63,9 +63,7 @@ public class HomePageFragment extends Fragment {
 
 	@Override
 	public void onDestroy() {
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(getActivity());
-		pref.unregisterOnSharedPreferenceChangeListener(prefListener);
+		deregisterPacketsProcessedListener();
 		super.onDestroy();
 	}
 
@@ -88,28 +86,6 @@ public class HomePageFragment extends Fragment {
 				+ getString(R.string.home_page_num_packets_processed_text_part2);
 
 		numPacketsProcessedText.setText(text);
-
-		// adds a change listener to shared preferences
-		// this listens for changes to the number of packets
-		// processed and changes the text field when the number changes
-		prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-			@Override
-			public void onSharedPreferenceChanged(
-					SharedPreferences sharedPreferences, String key) {
-				if (key.equals(getString(R.string.packets_completed_key))) {
-					String packetsProcessed = sharedPreferences.getInt(
-							getString(R.string.packets_completed_key), 0)
-							+ " "
-							+ getString(R.string.home_page_num_packets_processed_text_part2);
-
-					numPacketsProcessedText.setText(packetsProcessed);
-				}
-
-			}
-		};
-
-		pref.registerOnSharedPreferenceChangeListener(prefListener);
 	}
 
 	/**
@@ -173,9 +149,18 @@ public class HomePageFragment extends Fragment {
 	private void setupProcessingButton(View view) {
 		startStopProcessing = (Button) view
 				.findViewById(R.string.home_page_processing_button_id);
+
 		if (isProcessingRunning(DataProcessingService.class)) {
+			registerPacketsProcessedListener();
 			startStopProcessing
 					.setText(getString(R.string.home_page_processing_button_stop_processing_text));
+		} else if (beginButtonPushed()) {
+			registerPacketsProcessedListener();
+			startStopProcessing
+					.setText(getString(R.string.home_page_processing_button_start_processing_text));
+		} else {
+			startStopProcessing
+					.setText(getString(R.string.home_page_processing_button_startup_text));
 		}
 
 		startStopProcessing.setOnClickListener(new OnClickListener() {
@@ -183,18 +168,15 @@ public class HomePageFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				String stopProcessing = getString(R.string.home_page_processing_button_stop_processing_text);
-				String startupText = getString(R.string.home_page_processing_button_startup_text);
 
-				if (startStopProcessing.getText().equals(startupText)) {
-					Intent loadProcessingClass = new Intent(getActivity(),
-							LoadProcessingClassService.class);
-					Intent startBatteryMonitor = new Intent(getActivity(),
-							BatteryMonitorService.class);
+				if (!hasStartedProcessing()) {
+					Intent getPackets = new Intent(getActivity(),
+							RequestWorkPacketsService.class);
+					getActivity().startService(getPackets);
 
+					beginButtonWasPushed();
 					changeUserPermitsProcessingPref(true);
-					getActivity().startService(loadProcessingClass);
-					getActivity().startService(startBatteryMonitor);
-
+					registerPacketsProcessedListener();
 					startStopProcessing
 							.setText(getString(R.string.home_page_processing_button_stop_processing_text));
 
@@ -209,6 +191,7 @@ public class HomePageFragment extends Fragment {
 					changeUserPermitsProcessingPref(false);
 					getActivity().stopService(stopListeningToBattery);
 					getActivity().stopService(stopProcessingService);
+					deregisterPacketsProcessedListener();
 
 					startStopProcessing
 							.setText(getString(R.string.home_page_processing_button_start_processing_text));
@@ -221,6 +204,7 @@ public class HomePageFragment extends Fragment {
 
 					changeUserPermitsProcessingPref(true);
 					getActivity().startService(startBatteryMonitor);
+					registerPacketsProcessedListener();
 
 					startStopProcessing
 							.setText(getString(R.string.home_page_processing_button_stop_processing_text));
@@ -242,8 +226,11 @@ public class HomePageFragment extends Fragment {
 	private void openChangeEmailDialog() {
 		// inflate the view and set up the textfield and checked text view
 		LayoutInflater factory = LayoutInflater.from(getActivity());
+		ViewGroup parent = (ViewGroup) getActivity().findViewById(
+				R.layout.home_page_fragment);
+
 		final View changeEmailView = factory.inflate(
-				R.layout.change_email_dialog_view, null);
+				R.layout.change_email_dialog_view, parent);
 
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
 				getActivity());
@@ -266,8 +253,8 @@ public class HomePageFragment extends Fragment {
 				getString(R.string.anonymous_key), false);
 
 		if (email.equals("")) {
-			changeEmailText
-					.setText(getString(R.string.home_page_email_default_text));
+			changeEmailText.setText("");
+			// .setText(getString(R.string.home_page_email_default_text));
 		} else {
 			changeEmailText.setText(email);
 		}
@@ -400,5 +387,74 @@ public class HomePageFragment extends Fragment {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Helper method registers the listener that listens for changes in the
+	 * number of packets processed.
+	 */
+	private void registerPacketsProcessedListener() {		
+		// adds a change listener to shared preferences
+		// this listens for changes to the number of packets
+		// processed and changes the text field when the number changes
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());				
+		prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+			@Override
+			public void onSharedPreferenceChanged(
+					SharedPreferences sharedPreferences, String key) {
+				if (key.equals(getString(R.string.packets_completed_key))) {
+					String packetsProcessed = sharedPreferences.getInt(
+							getString(R.string.packets_completed_key), 0)
+							+ " "
+							+ getString(R.string.home_page_num_packets_processed_text_part2);
+
+					numPacketsProcessedText.setText(packetsProcessed);
+				}
+
+			}
+		};
+
+		pref.registerOnSharedPreferenceChangeListener(prefListener);
+	}
+
+	/**
+	 * Helper method deregisters the listener that listens for changes in the
+	 * number of packets processed.
+	 */
+	private void deregisterPacketsProcessedListener() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		pref.unregisterOnSharedPreferenceChangeListener(prefListener);
+	}
+
+	/**
+	 * Helper method stores a flag to show that the begin button has been
+	 * pushed. This button should only be pushed once, even if processing hasn't
+	 * yet occurred.
+	 */
+	private void beginButtonWasPushed() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		pref.edit().putBoolean(getString(R.string.begin_button_pushed), true)
+				.apply();
+	}
+
+	private boolean beginButtonPushed() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		return pref.getBoolean(getString(R.string.begin_button_pushed), false);
+	}
+
+	/**
+	 * Helper method checks to see if the app has started processing
+	 * 
+	 * @return
+	 */
+	private boolean hasStartedProcessing() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		return pref.getBoolean(getString(R.string.processing_started_key),
+				false);
 	}
 }

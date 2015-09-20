@@ -6,9 +6,8 @@ package uk.ac.qub.finalproject.client.services;
 import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 
 /**
  * This service pulls the latest list of results packets from the database. If
@@ -18,12 +17,16 @@ import android.os.IBinder;
  * @author Phil
  *
  */
-public class SendResultsService extends Service {
-
+public class SendResultsService extends IntentService {
+	
 	private DataStorage workDB;
 
+	public SendResultsService() {
+		super(SendResultsService.class.getName());		
+	}
+	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	protected void onHandleIntent(Intent intent) {
 		workDB = FileAndPrefStorage.getInstance(getApplicationContext());
 		ResultsPacketList resultsList = workDB.loadResultsPacketList();
 
@@ -35,18 +38,7 @@ public class SendResultsService extends Service {
 			Thread sendResultsThread = new Thread(sendResultsRunnable);
 			sendResultsThread.start();
 		}
-
-		return START_NOT_STICKY;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Service#onBind(android.content.Intent)
-	 */
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
+		
 	}
 
 }

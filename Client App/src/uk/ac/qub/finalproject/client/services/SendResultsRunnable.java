@@ -53,7 +53,7 @@ public class SendResultsRunnable extends RunnableClientTemplate {
 	@Override
 	protected void communicateWithServer() throws IOException {
 		output.reset();
-		output.write(ClientRequest.PROCESS_RESULT);
+		output.writeInt(ClientRequest.PROCESS_RESULT);
 		output.writeObject(resultsPacketList);
 		output.flush();
 	}
@@ -65,8 +65,7 @@ public class SendResultsRunnable extends RunnableClientTemplate {
 
 	@Override
 	protected void finish() {
-		workDB.deleteNetworkRequest(ClientRequest.PROCESS_RESULT);
-		service.stopSelf();
+		workDB.deleteNetworkRequest(ClientRequest.PROCESS_RESULT);		
 	}
 
 }

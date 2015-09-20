@@ -25,7 +25,7 @@ import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
 import uk.ac.qub.finalproject.client.implementations.Implementations;
 import uk.ac.qub.finalproject.client.services.StopAllProcessingService;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 
 /**
  * An implementation of the Data Storage interface. This stores the results list
@@ -161,16 +161,16 @@ public class FileAndPrefStorage implements DataStorage {
 
 		internalList.addAll(externalList);
 
-		if (null == internalList.getTimeStamp()
-				&& null == externalList.getTimeStamp()) {
+		if (internalList.getTimeStamp() == 0
+				&& externalList.getTimeStamp() == 0) {
 			// if neither of the lists have time stamps
 			// that means they are both empty,
 			// the getTimeStamp method will not
 			// be called on an empty list
 
-		} else if (null == externalList.getTimeStamp()) {
+		} else if (externalList.getTimeStamp() == 0) {
 			// the internal list will have a time stamp
-		} else if (null == internalList.getTimeStamp()) {
+		} else if (internalList.getTimeStamp() == 0) {
 			internalList.setTimeStamp(externalList.getTimeStamp());
 		} else if (externalList.getTimeStamp() < internalList.getTimeStamp()) {
 			// set the timestamp to the earlier timestamp
@@ -226,16 +226,16 @@ public class FileAndPrefStorage implements DataStorage {
 
 		internalList.addAll(externalList);
 
-		if (null == internalList.getTimeStamp()
-				&& null == externalList.getTimeStamp()) {
+		if (internalList.getTimeStamp() == 0
+				&& externalList.getTimeStamp() == 0) {
 			// if neither of the lists have time stamps
 			// that means they are both empty,
 			// the getTimeStamp method will not
 			// be called on an empty list
 
-		} else if (null == externalList.getTimeStamp()) {
+		} else if (externalList.getTimeStamp() == 0) {
 			// the internal list will have a time stamp
-		} else if (null == internalList.getTimeStamp()) {
+		} else if (internalList.getTimeStamp() == 0) {
 			internalList.setTimeStamp(externalList.getTimeStamp());
 		} else if (externalList.getTimeStamp() < internalList.getTimeStamp()) {
 			// set the timestamp to the earlier timestamp

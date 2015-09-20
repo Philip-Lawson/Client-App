@@ -11,7 +11,7 @@ import uk.ac.qub.finalproject.calculationclasses.IDataProcessor;
 import uk.ac.qub.finalproject.calculationclasses.ProcessingClassLoader;
 import uk.ac.qub.finalproject.calculationclasses.ResultsPacketList;
 import uk.ac.qub.finalproject.calculationclasses.WorkPacketList;
-import uk.ac.qub.finalproject.client.views.R;
+import uk.ac.qub.finalproject.s40143289.client.views.R;
 import uk.ac.qub.finalproject.client.persistence.DataStorage;
 import uk.ac.qub.finalproject.client.persistence.FileAndPrefStorage;
 import android.content.Context;

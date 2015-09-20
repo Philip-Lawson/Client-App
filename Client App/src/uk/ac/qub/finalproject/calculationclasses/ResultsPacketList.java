@@ -23,7 +23,7 @@ public class ResultsPacketList extends ArrayList<IResultsPacket> {
 
 	private String deviceID;
 
-	private Long timeStamp;
+	private long timeStamp;
 
 	public ResultsPacketList() {
 		super();
@@ -42,11 +42,11 @@ public class ResultsPacketList extends ArrayList<IResultsPacket> {
 		this.deviceID = deviceID;
 	}
 
-	public Long getTimeStamp() {
+	public long getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(Long timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
