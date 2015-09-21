@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="battery_limits">
+        <item>Only When Charging</item>
         <item>90%</item>
         <item>80%</item>
         <item>70%</item>
@@ -10,6 +11,7 @@
     </string-array>
     
     <string-array name="battery_limit_values">
+        <item>101</item>
         <item>90</item>
         <item>80</item>
         <item>70</item>

@@ -13,11 +13,35 @@ import java.io.Serializable;
  * @author Phil
  *
  */
-public class ResultsPacket extends AbstractResultsPacket implements Serializable {
+public class ResultsPacket extends AbstractResultsPacket implements
+		Serializable {
 
 	/**
 	 * Generated serial ID.
 	 */
 	private static final long serialVersionUID = -5714766945075744825L;
+
+	@Override
+	public boolean equals(Object arg) {
+		if (arg == null) {
+			return false;
+		}
+
+		if (!getClass().equals(arg.getClass())) {
+			return false;
+		}
+
+		IResultsPacket other = (IResultsPacket) arg;
+		return getPacketId().equals(other.getPacketId());
+	}
+
+	@Override
+	public int hashCode() {
+		if (getPacketId() != null) {
+			return getPacketId().hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 
 }

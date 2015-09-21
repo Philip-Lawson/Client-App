@@ -25,9 +25,12 @@ public class NetworkService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		DataStorage workDB = FileAndPrefStorage.getInstance(this);
 		List<Integer> incompleteTasks = workDB.getIncompleteNetworkActions();
+		
 		for (Integer task : incompleteTasks) {
 			processTask(task);
 		}
+		
+		stopSelf();
 
 		return START_STICKY;
 	}

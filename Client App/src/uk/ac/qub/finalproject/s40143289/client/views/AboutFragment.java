@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import uk.ac.qub.finalproject.client.implementations.Implementations;
 import uk.ac.qub.finalproject.s40143289.client.views.R;
 
@@ -26,6 +27,7 @@ import uk.ac.qub.finalproject.s40143289.client.views.R;
 public class AboutFragment extends Fragment {
 
 	private Button donateButton;
+	private TextView aboutText;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +36,8 @@ public class AboutFragment extends Fragment {
 				false);
 		donateButton = (Button) view
 				.findViewById(R.string.about_page_donate_button_id);
+		aboutText = (TextView) view.findViewById(R.string.about_page_text_id);
+		aboutText.setText(Implementations.getAboutText());
 
 		// if the implementer wants to have a donate page accessible
 		// the donate button will be visible and will have an onClickListener

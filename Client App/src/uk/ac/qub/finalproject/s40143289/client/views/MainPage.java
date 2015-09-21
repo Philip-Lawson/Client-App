@@ -62,8 +62,7 @@ public class MainPage extends ActionBarActivity {
 			if (dataDeletionProgress.isShowing()) {
 				dataDeletionProgress.dismiss();
 			}
-
-			unlockScreenOrientation();
+			
 			showDeleteSuccessfulDialog();
 		}
 
@@ -194,7 +193,8 @@ public class MainPage extends ActionBarActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				moveToRegisterPage();
+				unlockScreenOrientation();
+				moveToRegisterPage();				
 			}
 
 		});

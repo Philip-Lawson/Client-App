@@ -88,7 +88,8 @@
     <string name="delete_account_button_title">Delete Account</string>
 
     <!-- Strings for About Fragment -->
-    <string name="about_page_id">About Page ID</string>
+    <string name="about_page_image_id">About page image</string>
+    <string name="about_page_text_id">About Page ID</string>
     <string name="about_page_text">This is a placeholder this is a placeholder this is a placeholder this is a placeholder</string>
     <string name="about_page_donate_button_id">Donate Button ID</string>
     <string name="about_page_donate_button_text">Donate</string>

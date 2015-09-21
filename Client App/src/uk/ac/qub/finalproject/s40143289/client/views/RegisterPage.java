@@ -169,12 +169,13 @@ public class RegisterPage extends ActionBarActivity {
 				if (anonymousField.isChecked() || validEmailAddress) {
 
 					SharedPreferences pref = PreferenceManager
-							.getDefaultSharedPreferences(getBaseContext());
+							.getDefaultSharedPreferences(getApplicationContext());
 
 					RegistrationPack registrationPack = new RegistrationPack();
 					registrationPack.setAndroidID(Secure.getString(
 							getContentResolver(), Secure.ANDROID_ID));
-					registrationPack.setVersionCode(getAppVersion());
+					registrationPack.setVersionCode(getAppVersion());					
+					
 
 					if (anonymousField.isChecked()) {
 						// store the user's preference for anonymity in shared
@@ -196,7 +197,7 @@ public class RegisterPage extends ActionBarActivity {
 										emailAddress).apply();
 
 					}
-
+					
 					startRegistration(registrationPack);
 					showProgress();
 				} else {
@@ -284,10 +285,11 @@ public class RegisterPage extends ActionBarActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
 		RunnableClientTemplate registerClient = new RegisterClientThread(
-				getBaseContext(), registrationPack, registrationHandler);
+				getApplicationContext(), registrationPack, registrationHandler);
 		Thread registrationThread = new Thread(registerClient);
-		registrationThread.setDaemon(true);
+		registrationThread.setDaemon(true);		
 		registrationThread.start();
+		
 	}
 
 	/**

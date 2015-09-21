@@ -53,5 +53,28 @@ public class WorkPacket extends AbstractWorkPacket implements Serializable {
 	public WorkPacket(String packetId, Serializable initialData) {
 		super(packetId, initialData);
 	}
+	
+	@Override
+	public boolean equals(Object arg){
+		if (arg == null){
+			return false;
+		}
+		
+		if (!getClass().equals(arg.getClass()) ){
+			return false;
+		}
+		
+		IWorkPacket other = (IWorkPacket) arg;
+		return getPacketId().equals(other.getPacketId());
+	}
+	
+	@Override
+	public int hashCode() {
+		if (getPacketId() != null) {
+			return getPacketId().hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 
 }

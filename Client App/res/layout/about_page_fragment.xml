@@ -6,27 +6,37 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
+    
+    <ImageView
+        android:id="@string/about_page_image_id"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@string/about_page_text_id"
+        android:contentDescription="@string/register_page_image_description"
+        android:scaleType="fitXY"
+        android:src="@drawable/studying_robot" />
 
     <TextView
-        android:id="@string/about_page_id"
+        android:id="@string/about_page_text_id"
         android:paddingTop="36dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@string/about_page_donate_button_id"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/about_page_text"
         android:textIsSelectable="false" />
 
     <Button
         android:id="@string/about_page_donate_button_id"        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@string/about_page_id"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/about_page_donate_button_text" >
     </Button>
 

@@ -107,7 +107,7 @@ public abstract class RunnableClientTemplate implements Runnable {
 
 	}
 
-	private void connectToServer() throws UnknownHostException, IOException {
+	protected void connectToServer() throws UnknownHostException, IOException {
 		client = new Socket();
 		client.connect(new InetSocketAddress(InetAddress.getByName(Implementations.getHost()),
 				PORT_NUMBER), 3000);
@@ -155,7 +155,6 @@ public abstract class RunnableClientTemplate implements Runnable {
 	public void run() {
 		try {
 			setup();
-
 			if (networkAvailable()) {
 				connectToServer();
 				getStreams();
