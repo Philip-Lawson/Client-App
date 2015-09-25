@@ -11,8 +11,8 @@ import android.content.Intent;
  *
  */
 public class LoadProcessingClassService extends IntentService {
-
-	public LoadProcessingClassService(String name) {
+	
+	public LoadProcessingClassService() {
 		super(LoadProcessingClassService.class.getSimpleName());		
 	}
 

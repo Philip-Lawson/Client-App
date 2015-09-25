@@ -32,7 +32,7 @@ public class SplashActivity extends Activity {
 			startActivity(intent);
 		} else {
 			// move to the register page
-			Intent intent = new Intent(this, RegisterPage.class);
+			Intent intent = new Intent(this, MainPage.class);
 			startActivity(intent);
 		}
 

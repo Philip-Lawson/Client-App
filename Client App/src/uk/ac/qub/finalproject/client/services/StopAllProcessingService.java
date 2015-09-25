@@ -15,7 +15,11 @@ import android.content.Intent;
  */
 public class StopAllProcessingService extends IntentService {
 
-	public StopAllProcessingService(String name) {
+	public StopAllProcessingService() {
+		super(StopAllProcessingService.class.getName());
+	}
+	
+	public StopAllProcessingService(String name){
 		super(name);
 	}
 

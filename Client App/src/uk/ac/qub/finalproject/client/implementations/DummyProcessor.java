@@ -8,7 +8,9 @@ import java.io.Serializable;
 import uk.ac.qub.finalproject.calculationclasses.AbstractDataProcessor;
 
 /**
- * A dummy implementation of the data processor class.
+ * A dummy implementation of the data processor class. It just multiplies the
+ * numbers by two and simulates a longer calculation.
+ * 
  * @author Phil
  *
  */
@@ -21,18 +23,18 @@ public class DummyProcessor extends AbstractDataProcessor {
 
 	@Override
 	protected Serializable processData(Serializable obj) {
-		
+
 		Integer number;
 		try {
 			number = (Integer) obj;
 			Thread.sleep(10000);
-		} catch (ClassCastException e) {			
+		} catch (ClassCastException e) {
 			return -1;
-		} catch (InterruptedException e){
+		} catch (InterruptedException e) {
 			return -1;
 		}
-		
-		return number*2;
+
+		return number * 2;
 	}
 
 }

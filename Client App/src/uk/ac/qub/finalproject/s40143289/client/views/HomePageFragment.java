@@ -112,6 +112,16 @@ public class HomePageFragment extends Fragment {
 			emailText.setText(email);
 		}
 
+		anonymousCheckedTextView.setEnabled(true);
+		anonymousCheckedTextView.setClickable(true);
+		anonymousCheckedTextView.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				openChangeEmailDialog();				
+			}
+			
+		});
 		anonymousCheckedTextView.setChecked(anonymous);
 
 	}

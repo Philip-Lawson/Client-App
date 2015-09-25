@@ -49,7 +49,7 @@ public class RegisterClientThread extends RunnableClientTemplate {
 	@Override
 	public void processConnection() throws IOException {
 		boolean registrationSuccessful = input.readBoolean();
-
+		
 		Message msg = Message.obtain();
 		Bundle b = new Bundle();
 		b.putBoolean(RegisterPage.REGISTRATION_SUCCESS, registrationSuccessful);
