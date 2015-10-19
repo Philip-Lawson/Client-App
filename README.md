@@ -35,10 +35,41 @@ To implement the app you will need a Google Play account.
 Before loading it to the Google Play store you must
 * Extend the AbstractDataProcessor class, implement the processData method and plug this into the Implementations class (src/client/implementations/)
 * Set the isDemo option to false
-* Set the host URL and port to the URL and port used for the Coordinator.
+* Set the host URL and port as appropriate to communicate with the Coordinator.
 * If you want to link the user to a donate page, set donateButtonEnabled to return true and set getProjectWebsite to return the URL of your website.
 * Write the about text for the app and include it in the Implementations class.
 * Change the name of the app in the res/values/strings file
 * Change the package name in the manifest to something sensible
 
-## Implementing the Data Processor class
+## Example DataProcessor Implementation
+
+```Java
+public class TestProcessor extends AbstractDataProcessor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1696565467124647685L;
+
+	@Override
+	protected Serializable processData(Serializable obj) {
+    
+    // cast the Serializable to the object that you need to process
+    // here we're just simulating a long calculation
+		Integer number;
+		try {
+			number = (Integer) obj;
+			
+			// long processing method
+			Thread.sleep(10000);
+			return number * 2;
+		} catch (ClassCastException e) {
+			return -1;
+		} catch (InterruptedException e) {
+			return -1;
+		}
+
+	}
+
+}
+```
