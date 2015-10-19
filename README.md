@@ -54,8 +54,8 @@ public class TestProcessor extends AbstractDataProcessor {
 	@Override
 	protected Serializable processData(Serializable obj) {
     
-    // cast the Serializable to the object that you need to process
-    // here we're just simulating a long calculation
+                // cast the Serializable to the object that you need to process
+                // here we're just simulating a long calculation
 		Integer number;
 		try {
 			number = (Integer) obj;
