@@ -33,10 +33,12 @@ The Client App
 To implement the app you will need a Google Play account.
 
 Before loading it to the Google Play store you must
-* Implement the IDataProcessor interface and plug this into the Implementations class (src/client/implementations/)
+* Extend the AbstractDataProcessor class, implement the processData method and plug this into the Implementations class (src/client/implementations/)
 * Set the isDemo option to false
 * Set the host URL and port to the URL and port used for the Coordinator.
 * If you want to link the user to a donate page, set donateButtonEnabled to return true and set getProjectWebsite to return the URL of your website.
 * Write the about text for the app and include it in the Implementations class.
 * Change the name of the app in the res/values/strings file
 * Change the package name in the manifest to something sensible
+
+## Implementing the Data Processor class
